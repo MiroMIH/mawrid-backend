@@ -3,18 +3,28 @@ package com.mawrid.common.config;
 import com.mawrid.category.Category;
 import com.mawrid.category.CategoryRepository;
 import com.mawrid.common.enums.NodeType;
+import com.mawrid.user.Role;
+import com.mawrid.user.User;
+import com.mawrid.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Seeds the 10 top-level sectors and their subcategories on first boot
- * when the categories table is empty (replaces V2 Flyway migration).
+ * Seeds categories from data/categories.csv and creates the default superadmin
+ * user on first boot if they do not already exist.
  */
 @Slf4j
 @Component
@@ -22,86 +32,81 @@ import java.util.List;
 public class DataInitializer implements ApplicationRunner {
 
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    @Value("${app.seed.superadmin.email:superadmin@mawrid.dz}")
+    private String superadminEmail;
+
+    @Value("${app.seed.superadmin.password:SuperAdmin@2026}")
+    private String superadminPassword;
+
+    @Value("${app.seed.superadmin.first-name:Super}")
+    private String superadminFirstName;
+
+    @Value("${app.seed.superadmin.last-name:Admin}")
+    private String superadminLastName;
 
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        seedCategories();
+        seedSuperadmin();
+    }
+
+    // ── Categories ────────────────────────────────────────────────────────────
+
+    private void seedCategories() {
         if (categoryRepository.count() > 0) {
-            log.debug("Categories already seeded — skipping DataInitializer");
+            log.debug("Categories already seeded — skipping");
             return;
         }
 
-        log.info("Seeding initial category data...");
+        log.info("Seeding categories from data/categories.csv...");
 
-        Category machines     = root("Machines Agricoles",          "machines-agricoles");
-        Category pieces       = root("Pièces Mécaniques",           "pieces-mecaniques");
-        Category materiaux    = root("Matériaux de Construction",   "materiaux-construction");
-        Category electriques  = root("Équipements Électriques",     "equipements-electriques");
-        Category industriels  = root("Équipements Industriels",     "equipements-industriels");
-        Category chimiques    = root("Produits Chimiques",          "produits-chimiques");
-        Category emballage    = root("Emballage & Conditionnement", "emballage-conditionnement");
-        Category fournitures  = root("Fournitures de Bureau",       "fournitures-bureau");
-        Category hydraulique  = root("Hydraulique & Pneumatique",   "hydraulique-pneumatique");
-        Category securite     = root("Sécurité Industrielle",       "securite-industrielle");
+        Map<String, Category> bySlug = new HashMap<>();
 
-        // Machines Agricoles children
-        child("Tracteurs",               "tracteurs",               machines);
-        child("Moissonneuses-Batteuses", "moissonneuses-batteuses", machines);
-        child("Motopompes",              "motopompes",              machines);
-        child("Systèmes d'Irrigation",   "systemes-irrigation",     machines);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new ClassPathResource("data/categories.csv").getInputStream(),
+                StandardCharsets.UTF_8))) {
 
-        // Pièces Mécaniques children
-        child("Roulements",          "roulements",      pieces);
-        child("Courroies & Chaînes", "courroies-chaines", pieces);
-        child("Joints & Garnitures", "joints-garnitures", pieces);
-        child("Engrenages",          "engrenages",      pieces);
+            String line;
+            boolean header = true;
+            while ((line = reader.readLine()) != null) {
+                if (header) { header = false; continue; } // skip header row
+                line = line.trim();
+                if (line.isEmpty()) continue;
 
-        // Matériaux de Construction children
-        child("Ciment & Béton",      "ciment-beton",       materiaux);
-        child("Acier & Ferraille",   "acier-ferraille",    materiaux);
-        child("Brique & Tuile",      "brique-tuile",       materiaux);
-        child("Isolation Thermique", "isolation-thermique", materiaux);
+                String[] parts = line.split(",", 3);
+                if (parts.length < 2) continue;
 
-        // Équipements Électriques children
-        child("Câbles & Fils",        "cables-fils",         electriques);
-        child("Tableaux Électriques", "tableaux-electriques", electriques);
-        child("Moteurs Électriques",  "moteurs-electriques", electriques);
-        child("Groupes Électrogènes", "groupes-electrogenes", electriques);
+                String name       = parts[0].trim();
+                String slug       = parts[1].trim();
+                String parentSlug = parts.length == 3 ? parts[2].trim() : "";
 
-        // Équipements Industriels children
-        child("Compresseurs",    "compresseurs",    industriels);
-        child("Pompes",          "pompes",          industriels);
-        child("Convoyeurs",      "convoyeurs",      industriels);
-        child("Chaudières",      "chaudieres",      industriels);
+                Category saved;
+                if (parentSlug.isEmpty()) {
+                    saved = saveRoot(name, slug);
+                } else {
+                    Category parent = bySlug.get(parentSlug);
+                    if (parent == null) {
+                        log.warn("Parent slug '{}' not found for '{}' — skipping", parentSlug, name);
+                        continue;
+                    }
+                    saved = saveChild(name, slug, parent);
+                }
+                bySlug.put(slug, saved);
+            }
 
-        // Produits Chimiques children
-        child("Lubrifiants",         "lubrifiants",          chimiques);
-        child("Solvants",            "solvants",             chimiques);
-        child("Produits de Nettoyage", "produits-nettoyage", chimiques);
+        } catch (Exception e) {
+            log.error("Failed to seed categories from CSV", e);
+            return;
+        }
 
-        // Emballage children
-        child("Cartons & Boîtes",   "cartons-boites",    emballage);
-        child("Sachets & Films",    "sachets-films",     emballage);
-        child("Étiquettes",         "etiquettes",        emballage);
-
-        // Fournitures children
-        child("Papeterie",          "papeterie",     fournitures);
-        child("Mobilier de Bureau", "mobilier",      fournitures);
-
-        // Hydraulique children
-        child("Vérins Hydrauliques", "verins-hydrauliques", hydraulique);
-        child("Vannes & Raccords",   "vannes-raccords",     hydraulique);
-        child("Compresseurs Air",    "compresseurs-air",    hydraulique);
-
-        // Sécurité children
-        child("EPI",                      "epi",                  securite);
-        child("Extincteurs",              "extincteurs",          securite);
-        child("Signalisation de Sécurité","signalisation-securite", securite);
-
-        log.info("Category seeding complete.");
+        log.info("Category seeding complete — {} categories loaded", bySlug.size());
     }
 
-    private Category root(String name, String slug) {
+    private Category saveRoot(String name, String slug) {
         Category c = categoryRepository.save(Category.builder()
                 .name(name)
                 .slug(slug)
@@ -113,7 +118,7 @@ public class DataInitializer implements ApplicationRunner {
         return categoryRepository.save(c);
     }
 
-    private Category child(String name, String slug, Category parent) {
+    private Category saveChild(String name, String slug, Category parent) {
         Category c = categoryRepository.save(Category.builder()
                 .name(name)
                 .slug(slug)
@@ -124,5 +129,25 @@ public class DataInitializer implements ApplicationRunner {
                 .build());
         c.setPath(parent.getPath() + "." + c.getId());
         return categoryRepository.save(c);
+    }
+
+    // ── Superadmin ────────────────────────────────────────────────────────────
+
+    private void seedSuperadmin() {
+        if (userRepository.countByRole(Role.SUPERADMIN) > 0) {
+            log.debug("Superadmin already exists — skipping");
+            return;
+        }
+
+        userRepository.save(User.builder()
+                .email(superadminEmail)
+                .password(passwordEncoder.encode(superadminPassword))
+                .firstName(superadminFirstName)
+                .lastName(superadminLastName)
+                .role(Role.SUPERADMIN)
+                .enabled(true)
+                .build());
+
+        log.info("Default superadmin created: {}", superadminEmail);
     }
 }

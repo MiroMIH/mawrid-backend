@@ -95,6 +95,13 @@ app:
   cors:
     allowed-origins: http://localhost:3000,http://localhost:5173
 
+  seed:
+    superadmin:
+      email: superadmin@mawrid.dz
+      password: SuperAdmin@2026
+      first-name: Super
+      last-name: Admin
+
 springdoc:
   api-docs:
     path: /v3/api-docs

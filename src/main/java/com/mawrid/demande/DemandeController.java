@@ -71,7 +71,7 @@ public class DemandeController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('BUYER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('BUYER') or hasAnyRole('ADMIN', 'SUPERADMIN')")
     @Operation(summary = "Delete a demande")
     public ResponseEntity<ApiResponse<Void>> delete(
             @PathVariable UUID id,

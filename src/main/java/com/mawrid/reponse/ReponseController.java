@@ -42,7 +42,7 @@ public class ReponseController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('BUYER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('BUYER') or hasAnyRole('ADMIN', 'SUPERADMIN')")
     @Operation(summary = "Get DISPONIBLE suppliers for a demande (buyer only)")
     public ResponseEntity<ApiResponse<Page<ReponseResponse>>> getAvailable(
             @PathVariable UUID demandeId,

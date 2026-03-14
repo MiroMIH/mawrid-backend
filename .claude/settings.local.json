@@ -12,7 +12,8 @@
       "Bash(cd \"/c/Users/USER/Desktop/Mawrid/mawrid-backend\" && set -a && source .env && set +a && mvn spring-boot:run -Dspring-boot.run.jvmArguments=\"-Dserver.port=8081\" 2>&1)",
       "Bash(mvn compile:*)",
       "Bash(mvn test:*)",
-      "Bash(docker info:*)"
+      "Bash(docker info:*)",
+      "Bash(PGPASSWORD=mawrid_dev_pass_123 psql -h localhost -U mawrid -d mawrid -c \"ALTER TABLE users DROP CONSTRAINT users_role_check; ALTER TABLE users ADD CONSTRAINT users_role_check CHECK \\(role IN \\('BUYER', 'SUPPLIER', 'ADMIN', 'SUPERADMIN'\\)\\);\")"
     ]
   }
 }

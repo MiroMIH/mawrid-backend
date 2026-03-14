@@ -23,7 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/admin")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
 @SecurityRequirement(name = "bearerAuth")
 @Tag(name = "Admin", description = "Admin back-office endpoints")
 public class AdminController {

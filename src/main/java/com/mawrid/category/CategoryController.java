@@ -35,7 +35,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Create a new category (admin only)")
     public ResponseEntity<ApiResponse<CategoryResponse>> create(
@@ -46,7 +46,7 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Rename a category (admin only, non-SEEDED only)")
     public ResponseEntity<ApiResponse<CategoryResponse>> update(
@@ -57,7 +57,7 @@ public class CategoryController {
     }
 
     @PostMapping("/{id}/move")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Move a category subtree to a new parent (admin only)")
     public ResponseEntity<ApiResponse<CategoryResponse>> move(
@@ -68,7 +68,7 @@ public class CategoryController {
     }
 
     @PostMapping("/{id}/attributes")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Add an attribute schema to a category (admin only)")
     public ResponseEntity<ApiResponse<CategoryAttributeResponse>> addAttribute(
