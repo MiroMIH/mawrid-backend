@@ -1,0 +1,21 @@
+meta {
+  name: Get Demande by ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/demandes/{{demandeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

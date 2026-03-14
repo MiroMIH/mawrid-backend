@@ -1,0 +1,39 @@
+meta {
+  name: Add Category Attribute (Admin)
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/categories/{{categoryId}}/attributes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "key": "marque",
+    "label": "Marque",
+    "type": "TEXT",
+    "required": false,
+    "displayOrder": 1
+  }
+}
+
+docs {
+  type values: TEXT, NUMBER, BOOLEAN, SELECT
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}

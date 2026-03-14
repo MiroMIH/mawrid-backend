@@ -1,0 +1,35 @@
+meta {
+  name: Update Supplier Categories
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/users/me/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "categoryIds": [1, 2, 3]
+  }
+}
+
+docs {
+  note: SUPPLIER only. Login as supplier before calling this.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

@@ -1,0 +1,33 @@
+meta {
+  name: Register Supplier
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "supplier@test.com",
+    "password": "password123",
+    "firstName": "Karim",
+    "lastName": "Mansouri",
+    "phone": "0661987654",
+    "companyName": "Mansouri Fournitures",
+    "role": "SUPPLIER"
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}

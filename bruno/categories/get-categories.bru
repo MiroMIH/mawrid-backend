@@ -1,0 +1,20 @@
+meta {
+  name: Get Category Tree
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/categories
+  body: none
+  auth: none
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("data is array", function() {
+    expect(res.getBody().data).to.be.an("array");
+  });
+}

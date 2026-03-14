@@ -1,0 +1,33 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "buyer@test.com",
+    "password": "password123",
+    "firstName": "Ali",
+    "lastName": "Benali",
+    "phone": "0555123456",
+    "companyName": "Benali SARL",
+    "role": "BUYER"
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}

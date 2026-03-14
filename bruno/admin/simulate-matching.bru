@@ -1,0 +1,34 @@
+meta {
+  name: Simulate Matching (Admin)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/admin/matching/simulate
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "categoryId": 1,
+    "wilaya": "Alger",
+    "deadline": "2026-04-30",
+    "quantity": 100
+  }
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

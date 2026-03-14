@@ -1,0 +1,21 @@
+meta {
+  name: Dashboard Stats (Admin)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/admin/stats
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

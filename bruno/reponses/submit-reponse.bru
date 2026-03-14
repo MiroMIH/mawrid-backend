@@ -1,0 +1,37 @@
+meta {
+  name: Submit Reponse (Supplier)
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/demandes/{{demandeId}}/reponses
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "DISPONIBLE",
+    "note": "Nous pouvons livrer dans un délai de 5 jours ouvrables. Prix unitaire: 1200 DZD/sac."
+  }
+}
+
+docs {
+  status values: DISPONIBLE | INDISPONIBLE
+  note: Login as SUPPLIER before calling this endpoint
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+}

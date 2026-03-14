@@ -1,0 +1,58 @@
+meta {
+  name: Create Demande (Buyer)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Besoin de ciment Portland 500 sacs",
+    "description": "Ciment de qualité supérieure pour construction résidentielle",
+    "quantity": 500,
+    "unit": "sacs",
+    "deadline": "2026-04-30",
+    "categoryId": 1,
+    "wilaya": "Alger",
+    "attributes": [
+      {
+        "key": "marque",
+        "value": "Lafarge",
+        "custom": false
+      },
+      {
+        "key": "resistance",
+        "value": "42.5 MPa",
+        "custom": true
+      }
+    ]
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("demandeId", res.getBody().data.id);
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("demandeId saved", function() {
+    expect(res.getBody().data.id).to.be.a("string");
+  });
+}

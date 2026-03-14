@@ -1,0 +1,31 @@
+meta {
+  name: Register FCM Token
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/users/me/fcm-token
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "fcmToken": "dEz9K2mT...your-firebase-device-token-here"
+  }
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

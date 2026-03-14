@@ -1,0 +1,21 @@
+meta {
+  name: Toggle User Enabled (Admin)
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/admin/users/{{userId}}/toggle-enabled
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

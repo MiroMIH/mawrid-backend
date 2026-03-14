@@ -1,0 +1,35 @@
+meta {
+  name: Update Demande Status (Buyer)
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/demandes/{{demandeId}}/status
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "CLOSED"
+  }
+}
+
+docs {
+  status values: OPEN | CLOSED | CANCELLED
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}
