@@ -1,0 +1,45 @@
+name,slug,parent_slug
+Machines Agricoles,machines-agricoles,
+Tracteurs,tracteurs,machines-agricoles
+Moissonneuses-Batteuses,moissonneuses-batteuses,machines-agricoles
+Motopompes,motopompes,machines-agricoles
+Systèmes d'Irrigation,systemes-irrigation,machines-agricoles
+Pièces Mécaniques,pieces-mecaniques,
+Roulements,roulements,pieces-mecaniques
+Courroies & Chaînes,courroies-chaines,pieces-mecaniques
+Joints & Garnitures,joints-garnitures,pieces-mecaniques
+Engrenages,engrenages,pieces-mecaniques
+Matériaux de Construction,materiaux-construction,
+Ciment & Béton,ciment-beton,materiaux-construction
+Acier & Ferraille,acier-ferraille,materiaux-construction
+Brique & Tuile,brique-tuile,materiaux-construction
+Isolation Thermique,isolation-thermique,materiaux-construction
+Équipements Électriques,equipements-electriques,
+Câbles & Fils,cables-fils,equipements-electriques
+Tableaux Électriques,tableaux-electriques,equipements-electriques
+Moteurs Électriques,moteurs-electriques,equipements-electriques
+Groupes Électrogènes,groupes-electrogenes,equipements-electriques
+Équipements Industriels,equipements-industriels,
+Compresseurs,compresseurs,equipements-industriels
+Pompes,pompes,equipements-industriels
+Convoyeurs,convoyeurs,equipements-industriels
+Chaudières,chaudieres,equipements-industriels
+Produits Chimiques,produits-chimiques,
+Lubrifiants,lubrifiants,produits-chimiques
+Solvants,solvants,produits-chimiques
+Produits de Nettoyage,produits-nettoyage,produits-chimiques
+Emballage & Conditionnement,emballage-conditionnement,
+Cartons & Boîtes,cartons-boites,emballage-conditionnement
+Sachets & Films,sachets-films,emballage-conditionnement
+Étiquettes,etiquettes,emballage-conditionnement
+Fournitures de Bureau,fournitures-bureau,
+Papeterie,papeterie,fournitures-bureau
+Mobilier de Bureau,mobilier,fournitures-bureau
+Hydraulique & Pneumatique,hydraulique-pneumatique,
+Vérins Hydrauliques,verins-hydrauliques,hydraulique-pneumatique
+Vannes & Raccords,vannes-raccords,hydraulique-pneumatique
+Compresseurs Air,compresseurs-air,hydraulique-pneumatique
+Sécurité Industrielle,securite-industrielle,
+EPI,epi,securite-industrielle
+Extincteurs,extincteurs,securite-industrielle
+Signalisation de Sécurité,signalisation-securite,securite-industrielle
