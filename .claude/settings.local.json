@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(docker compose:*)",
+      "Bash(cd \"C:/Users/USER/Desktop/Mawrid/mawrid-backend\" && set -a && source .env && set +a && ./mvnw spring-boot:run 2>&1)",
+      "Bash(cd \"/c/Users/USER/Desktop/Mawrid/mawrid-backend\" && set -a && source .env && set +a && ./mvnw spring-boot:run 2>&1)",
+      "Bash(which mvn:*)",
+      "Bash(cd \"/c/Users/USER/Desktop/Mawrid/mawrid-backend\" && set -a && source .env && set +a && mvn spring-boot:run 2>&1)",
+      "Bash(netstat -ano | grep \":8080\" | head -5)",
+      "Bash(taskkill //PID 4160 //F 2>&1)",
+      "Bash(tasklist //FI \"PID eq 4160\" 2>&1)",
+      "Bash(cd \"/c/Users/USER/Desktop/Mawrid/mawrid-backend\" && set -a && source .env && set +a && mvn spring-boot:run -Dspring-boot.run.jvmArguments=\"-Dserver.port=8081\" 2>&1)",
+      "Bash(mvn compile:*)",
+      "Bash(mvn test:*)",
+      "Bash(docker info:*)"
+    ]
+  }
+}

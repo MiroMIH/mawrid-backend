@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:mawrid_test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;NON_KEYWORDS=value,key
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        format_sql: false
+  flyway:
+    enabled: false
+  cache:
+    type: simple
+  data:
+    redis:
+      host: localhost
+      port: 6370   # non-existent port — mocked in tests
+      password: ""
+  mail:
+    host: localhost
+    port: 3025
+
+app:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    access-token-expiry: 900000
+    refresh-token-expiry: 604800000
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin_secret
+    bucket: mawrid-test
+  firebase:
+    credentials-path: nonexistent.json
+  cors:
+    allowed-origins: http://localhost:3000

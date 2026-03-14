@@ -1,0 +1,119 @@
+spring:
+  application:
+    name: mawrid-backend
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mawrid
+    username: mawrid
+    password: mawrid_dev_pass_123
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: MawridHikariPool
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_batch_fetch_size: 20
+    open-in-view: false
+
+  flyway:
+    enabled: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: redis_dev_pass_456
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: mawrid.dev@gmail.com
+    password: placeholder_app_password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000
+
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 20
+        queue-capacity: 100
+        keep-alive: 60s
+      thread-name-prefix: mawrid-async-
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+
+app:
+  jwt:
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    access-token-expiry: 900000
+    refresh-token-expiry: 604800000
+
+  minio:
+    endpoint: http://localhost:9000
+    access-key: minioadmin
+    secret-key: minioadmin_dev_789
+    bucket: mawrid-attachments
+
+  firebase:
+    credentials-path: config/firebase-service-account.json
+
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:5173
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+  show-actuator: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    com.mawrid: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN

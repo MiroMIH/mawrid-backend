@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  datasource:
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 30
+
+logging:
+  level:
+    com.mawrid: WARN
+    org.springframework: WARN
+    root: ERROR
+
+server:
+  error:
+    include-stacktrace: never
+    include-message: never
