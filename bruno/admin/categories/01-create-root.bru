@@ -1,0 +1,56 @@
+meta {
+  name: 01 - Create Root Category
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/admin/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Équipements Industriels Test"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("adminCategoryId", String(res.getBody().data.id));
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("id saved to env", function() {
+    expect(res.getBody().data.id).to.be.a("number");
+  });
+  test("nodeType is ADMIN_CREATED", function() {
+    expect(res.getBody().data.nodeType).to.equal("ADMIN_CREATED");
+  });
+  test("depth is 0 (root)", function() {
+    expect(res.getBody().data.depth).to.equal(0);
+  });
+  test("path equals id", function() {
+    const body = res.getBody().data;
+    expect(body.path).to.equal(String(body.id));
+  });
+  test("slug auto-generated", function() {
+    expect(res.getBody().data.slug).to.equal("equipements-industriels-test");
+  });
+  test("active is true", function() {
+    expect(res.getBody().data.active).to.equal(true);
+  });
+}

@@ -1,0 +1,39 @@
+meta {
+  name: 06 - Rename SEEDED With forceRename (Superadmin)
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/admin/categories/1/rename
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Matériaux de Construction",
+    "forceRename": true
+  }
+}
+
+docs {
+  note: Restores original name after test 05. Requires SUPERADMIN token.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("name updated", function() {
+    expect(res.getBody().data.name).to.equal("Matériaux de Construction");
+  });
+}

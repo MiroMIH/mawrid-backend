@@ -1,0 +1,28 @@
+meta {
+  name: Get Category Attributes
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/categories/{{categoryId}}/attributes
+  body: none
+  auth: none
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("data is array", function() {
+    expect(res.getBody().data).to.be.an("array");
+  });
+  test("each attribute has key, label, type", function() {
+    res.getBody().data.forEach(function(attr) {
+      expect(attr.key).to.be.a("string");
+      expect(attr.label).to.be.a("string");
+      expect(attr.type).to.be.a("string");
+      expect(attr.inherited).to.be.a("boolean");
+    });
+  });
+}

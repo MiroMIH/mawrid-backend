@@ -1,0 +1,24 @@
+meta {
+  name: 07 - Mark Category as LEAF
+  type: http
+  seq: 7
+}
+
+patch {
+  url: {{baseUrl}}/admin/categories/{{grandCategoryId}}/mark-leaf
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("nodeType is LEAF", function() {
+    expect(res.getBody().data.nodeType).to.equal("LEAF");
+  });
+}

@@ -24,19 +24,14 @@ body:json {
     "description": "Ciment de qualité supérieure pour construction résidentielle",
     "quantity": 500,
     "unit": "sacs",
-    "deadline": "2026-04-30",
+    "deadline": "2026-06-30",
     "categoryId": 1,
-    "wilaya": "Alger",
+    "wilaya": "16",
     "attributes": [
       {
         "key": "marque",
         "value": "Lafarge",
         "custom": false
-      },
-      {
-        "key": "resistance",
-        "value": "42.5 MPa",
-        "custom": true
       }
     ]
   }
@@ -44,7 +39,7 @@ body:json {
 
 script:post-response {
   if (res.getStatus() === 201) {
-    bru.setEnvVar("demandeId", res.getBody().data.id);
+    bru.setEnvVar("demandeId", String(res.getBody().data.id));
   }
 }
 
@@ -52,7 +47,16 @@ tests {
   test("status 201", function() {
     expect(res.getStatus()).to.equal(201);
   });
-  test("demandeId saved", function() {
-    expect(res.getBody().data.id).to.be.a("string");
+  test("id is present", function() {
+    expect(res.getBody().data.id).to.exist;
+  });
+  test("status is OPEN", function() {
+    expect(res.getBody().data.status).to.equal("OPEN");
+  });
+  test("title matches", function() {
+    expect(res.getBody().data.title).to.equal("Besoin de ciment Portland 500 sacs");
+  });
+  test("demandeId saved to env", function() {
+    expect(bru.getEnvVar("demandeId")).to.exist;
   });
 }

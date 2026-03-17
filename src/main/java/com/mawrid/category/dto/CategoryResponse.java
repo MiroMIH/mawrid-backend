@@ -4,8 +4,7 @@ import com.mawrid.common.enums.NodeType;
 import lombok.Builder;
 import lombok.Value;
 
-import java.util.List;
-
+/** Flat response for a single category node. */
 @Value
 @Builder
 public class CategoryResponse {
@@ -18,5 +17,6 @@ public class CategoryResponse {
     boolean active;
     long demandeCount;
     Long parentId;
-    List<CategoryResponse> children;
+    String parentName;
+    int childrenCount;
 }

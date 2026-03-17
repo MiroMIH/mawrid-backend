@@ -1,0 +1,42 @@
+meta {
+  name: 08 - Create Under LEAF Node (expect error)
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/admin/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Sous-catégorie Invalide",
+    "parentId": {{grandCategoryId}}
+  }
+}
+
+docs {
+  note: MUST return error — LEAF nodes cannot have children.
+}
+
+tests {
+  test("status is 4xx error", function() {
+    expect(res.getStatus()).to.be.above(399);
+    expect(res.getStatus()).to.be.below(500);
+  });
+  test("error message mentions LEAF", function() {
+    const body = res.getBody();
+    const message = (body.message || body.error || "").toUpperCase();
+    expect(message).to.include("LEAF");
+  });
+}

@@ -1,19 +1,25 @@
 package com.mawrid.category;
 
-import com.mawrid.category.dto.*;
+import com.mawrid.category.dto.CategoryAttributeResponse;
+import com.mawrid.category.dto.CategoryResponse;
+import com.mawrid.category.dto.CategoryTreeResponse;
 import com.mawrid.common.response.ApiResponse;
+import com.mawrid.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Public and supplier-facing category endpoints.
+ * Admin management endpoints live in AdminCategoryController at /api/v1/admin/categories.
+ */
 @RestController
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
@@ -22,60 +28,37 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @GetMapping
-    @Operation(summary = "Get category tree (public)")
-    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getTree() {
+    @GetMapping("/tree")
+    @Operation(summary = "Get full active category tree (public)")
+    public ResponseEntity<ApiResponse<List<CategoryTreeResponse>>> getTree() {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.getTree()));
     }
 
+    @GetMapping("/{id}")
+    @Operation(summary = "Get a single category by ID (public)")
+    public ResponseEntity<ApiResponse<CategoryResponse>> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.ok(categoryService.getById(id)));
+    }
+
+    @GetMapping("/slug/{slug}")
+    @Operation(summary = "Get a category by slug (public — used by frontend URL routing)")
+    public ResponseEntity<ApiResponse<CategoryResponse>> getBySlug(@PathVariable String slug) {
+        return ResponseEntity.ok(ApiResponse.ok(categoryService.getBySlug(slug)));
+    }
+
     @GetMapping("/{id}/attributes")
-    @Operation(summary = "Get effective attributes for a category (including inherited)")
+    @Operation(summary = "Get effective attribute schema for a category — own + inherited (public)")
     public ResponseEntity<ApiResponse<List<CategoryAttributeResponse>>> getAttributes(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.getAttributes(id)));
     }
 
-    @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
+    @GetMapping("/subscribed")
+    @PreAuthorize("hasRole('SUPPLIER')")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Create a new category (admin only)")
-    public ResponseEntity<ApiResponse<CategoryResponse>> create(
-            @Valid @RequestBody CategoryRequest request
+    @Operation(summary = "Get the authenticated supplier's subscribed categories")
+    public ResponseEntity<ApiResponse<List<CategoryResponse>>> getSubscribed(
+            @AuthenticationPrincipal User user
     ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(categoryService.create(request), "Category created"));
-    }
-
-    @PatchMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Rename a category (admin only, non-SEEDED only)")
-    public ResponseEntity<ApiResponse<CategoryResponse>> update(
-            @PathVariable Long id,
-            @Valid @RequestBody CategoryRequest request
-    ) {
-        return ResponseEntity.ok(ApiResponse.ok(categoryService.update(id, request)));
-    }
-
-    @PostMapping("/{id}/move")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Move a category subtree to a new parent (admin only)")
-    public ResponseEntity<ApiResponse<CategoryResponse>> move(
-            @PathVariable Long id,
-            @Valid @RequestBody MoveRequest request
-    ) {
-        return ResponseEntity.ok(ApiResponse.ok(categoryService.move(id, request.getNewParentId())));
-    }
-
-    @PostMapping("/{id}/attributes")
-    @PreAuthorize("hasAnyRole('ADMIN', 'SUPERADMIN')")
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Add an attribute schema to a category (admin only)")
-    public ResponseEntity<ApiResponse<CategoryAttributeResponse>> addAttribute(
-            @PathVariable Long id,
-            @Valid @RequestBody CategoryAttributeRequest request
-    ) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(categoryService.addAttribute(id, request), "Attribute added"));
+        return ResponseEntity.ok(ApiResponse.ok(categoryService.getSubscribed(user)));
     }
 }

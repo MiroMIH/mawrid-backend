@@ -32,4 +32,7 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
+  test("status updated to CLOSED", function() {
+    expect(res.getBody().data.status).to.equal("CLOSED");
+  });
 }

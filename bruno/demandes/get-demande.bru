@@ -18,4 +18,17 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
+  test("id matches", function() {
+    expect(String(res.getBody().data.id)).to.equal(bru.getEnvVar("demandeId"));
+  });
+  test("title is string", function() {
+    expect(res.getBody().data.title).to.be.a("string");
+  });
+  test("status is valid", function() {
+    const validStatuses = ["OPEN", "CLOSED", "CANCELLED"];
+    expect(validStatuses).to.include(res.getBody().data.status);
+  });
+  test("categoryId present", function() {
+    expect(res.getBody().data.categoryId).to.exist;
+  });
 }

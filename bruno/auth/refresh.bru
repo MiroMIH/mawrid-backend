@@ -32,4 +32,10 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
+  test("new accessToken issued", function() {
+    expect(res.getBody().data.accessToken).to.be.a("string");
+  });
+  test("new refreshToken issued", function() {
+    expect(res.getBody().data.refreshToken).to.be.a("string");
+  });
 }

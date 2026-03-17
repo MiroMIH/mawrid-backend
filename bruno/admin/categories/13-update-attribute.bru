@@ -1,0 +1,44 @@
+meta {
+  name: 13 - Update Attribute
+  type: http
+  seq: 13
+}
+
+patch {
+  url: {{baseUrl}}/admin/categories/{{adminCategoryId}}/attributes/{{attrId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "key": "marque",
+    "label": "Marque (Fabricant)",
+    "type": "TEXT",
+    "required": true,
+    "displayOrder": 1
+  }
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("label updated", function() {
+    expect(res.getBody().data.label).to.equal("Marque (Fabricant)");
+  });
+  test("key unchanged", function() {
+    expect(res.getBody().data.key).to.equal("marque");
+  });
+  test("required updated to true", function() {
+    expect(res.getBody().data.required).to.equal(true);
+  });
+}

@@ -1,0 +1,39 @@
+meta {
+  name: Get Category Tree
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/categories/tree
+  body: none
+  auth: none
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("data is array", function() {
+    expect(res.getBody().data).to.be.an("array");
+  });
+  test("tree is not empty", function() {
+    expect(res.getBody().data.length).to.be.above(0);
+  });
+  test("each root has id, name, slug, depth", function() {
+    const root = res.getBody().data[0];
+    expect(root.id).to.be.a("number");
+    expect(root.name).to.be.a("string");
+    expect(root.slug).to.be.a("string");
+    expect(root.depth).to.equal(0);
+  });
+  test("children is an array", function() {
+    const root = res.getBody().data[0];
+    expect(root.children).to.be.an("array");
+  });
+  test("only active nodes returned", function() {
+    res.getBody().data.forEach(function(node) {
+      expect(node.active).to.equal(true);
+    });
+  });
+}

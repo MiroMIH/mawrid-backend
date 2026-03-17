@@ -1,0 +1,26 @@
+meta {
+  name: 21 - Delete Category
+  type: http
+  seq: 21
+}
+
+delete {
+  url: {{baseUrl}}/admin/categories/{{grandCategoryId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  note: Deletes the grandchild category.
+        Requires: no children, no demandes attached, not a SEEDED node.
+}
+
+tests {
+  test("status 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

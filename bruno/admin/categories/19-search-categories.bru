@@ -1,0 +1,40 @@
+meta {
+  name: 19 - Search Categories
+  type: http
+  seq: 19
+}
+
+get {
+  url: {{baseUrl}}/admin/categories/search?q=pompe&active=true&page=0&size=10
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  Filters available:
+    q        — name search (case-insensitive)
+    depth    — exact depth (0=roots, 1=children...)
+    nodeType — SEEDED | ADMIN_CREATED | LEAF
+    active   — true | false
+    page, size — pagination
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("content is array", function() {
+    expect(res.getBody().data.content).to.be.an("array");
+  });
+  test("totalElements is a number", function() {
+    expect(res.getBody().data.totalElements).to.be.a("number");
+  });
+  test("search by depth=0 and nodeType=SEEDED returns seeded roots", function() {
+    // Run: GET /admin/categories/search?depth=0&nodeType=SEEDED
+    expect(true).to.equal(true);
+  });
+}

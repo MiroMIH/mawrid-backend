@@ -1,0 +1,29 @@
+meta {
+  name: 16 - Deactivate Category (cascade to descendants)
+  type: http
+  seq: 16
+}
+
+patch {
+  url: {{baseUrl}}/admin/categories/{{adminCategoryId}}/toggle-active
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  note: Deactivating a parent cascades to ALL descendants.
+        After this, check GET /categories/tree — adminCategoryId should NOT appear.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("active is now false", function() {
+    expect(res.getBody().data.active).to.equal(false);
+  });
+}

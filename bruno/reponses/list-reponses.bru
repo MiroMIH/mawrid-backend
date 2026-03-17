@@ -1,5 +1,5 @@
 meta {
-  name: List Reponses for Demande (Buyer/Admin)
+  name: List Reponses for Demande
   type: http
   seq: 2
 }
@@ -14,8 +14,15 @@ auth:bearer {
   token: {{accessToken}}
 }
 
+docs {
+  note: Accessible by BUYER (owner) or ADMIN.
+}
+
 tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
+  });
+  test("data has content array", function() {
+    expect(res.getBody().data.content).to.be.an("array");
   });
 }

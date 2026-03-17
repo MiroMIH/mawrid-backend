@@ -1,5 +1,5 @@
 meta {
-  name: Register
+  name: Register (Buyer)
   type: http
   seq: 1
 }
@@ -17,7 +17,7 @@ headers {
 body:json {
   {
     "email": "buyer@test.com",
-    "password": "password123",
+    "password": "Password1!",
     "firstName": "Ali",
     "lastName": "Benali",
     "phone": "0555123456",
@@ -29,5 +29,11 @@ body:json {
 tests {
   test("status 201", function() {
     expect(res.getStatus()).to.equal(201);
+  });
+  test("response has data", function() {
+    expect(res.getBody().data).to.exist;
+  });
+  test("email matches", function() {
+    expect(res.getBody().data.email).to.equal("buyer@test.com");
   });
 }

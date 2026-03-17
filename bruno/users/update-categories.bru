@@ -32,4 +32,7 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
+  test("categories updated", function() {
+    expect(res.getBody().data.categories).to.be.an("array");
+  });
 }

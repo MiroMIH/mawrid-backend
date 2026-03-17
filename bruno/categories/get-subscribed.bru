@@ -1,13 +1,21 @@
 meta {
-  name: Get Category Tree
+  name: Get Subscribed Categories (Supplier)
   type: http
-  seq: 1
+  seq: 5
 }
 
 get {
-  url: {{baseUrl}}/categories
+  url: {{baseUrl}}/categories/subscribed
   body: none
-  auth: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  note: Login as SUPPLIER before calling this endpoint.
 }
 
 tests {

@@ -1,0 +1,31 @@
+meta {
+  name: List Users
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/admin/users?page=0&size=20
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  note: Login as ADMIN before calling any admin endpoint.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("data has content array", function() {
+    expect(res.getBody().data.content).to.be.an("array");
+  });
+  test("pagination info present", function() {
+    expect(res.getBody().data.totalElements).to.be.a("number");
+  });
+}

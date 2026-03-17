@@ -1,0 +1,42 @@
+meta {
+  name: 05 - Rename SEEDED Without Force (expect error)
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/admin/categories/1/rename
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Nom Modifié",
+    "forceRename": false
+  }
+}
+
+docs {
+  note: This MUST return an error. SEEDED nodes require forceRename=true.
+}
+
+tests {
+  test("status is 4xx error", function() {
+    expect(res.getStatus()).to.be.above(399);
+    expect(res.getStatus()).to.be.below(500);
+  });
+  test("error message mentions SEEDED", function() {
+    const body = res.getBody();
+    const message = (body.message || body.error || "").toUpperCase();
+    expect(message).to.include("SEEDED");
+  });
+}

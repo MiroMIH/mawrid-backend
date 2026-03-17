@@ -1,5 +1,5 @@
 meta {
-  name: Toggle User Enabled (Admin)
+  name: Toggle User Enabled
   type: http
   seq: 2
 }
@@ -14,8 +14,15 @@ auth:bearer {
   token: {{accessToken}}
 }
 
+docs {
+  note: Set userId env var to the target user's ID before running.
+}
+
 tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
+  });
+  test("enabled field is boolean", function() {
+    expect(res.getBody().data.enabled).to.be.a("boolean");
   });
 }

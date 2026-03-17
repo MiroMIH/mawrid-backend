@@ -34,7 +34,13 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
-  test("accessToken present", function() {
+  test("accessToken is string", function() {
     expect(res.getBody().data.accessToken).to.be.a("string");
+  });
+  test("refreshToken is string", function() {
+    expect(res.getBody().data.refreshToken).to.be.a("string");
+  });
+  test("userId saved", function() {
+    expect(res.getBody().data.userId).to.exist;
   });
 }

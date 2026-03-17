@@ -1,0 +1,41 @@
+meta {
+  name: 15 - Move to Own Descendant (expect error)
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{baseUrl}}/admin/categories/{{adminCategoryId}}/move
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "newParentId": {{grandCategoryId}}
+  }
+}
+
+docs {
+  note: MUST return error — cannot move a node into its own subtree (cycle).
+}
+
+tests {
+  test("status is 4xx error", function() {
+    expect(res.getStatus()).to.be.above(399);
+    expect(res.getStatus()).to.be.below(500);
+  });
+  test("error message mentions subtree or cycle", function() {
+    const body = res.getBody();
+    const message = (body.message || body.error || "").toLowerCase();
+    expect(message.includes("subtree") || message.includes("cycle") || message.includes("descendant")).to.equal(true);
+  });
+}

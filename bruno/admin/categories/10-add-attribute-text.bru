@@ -1,0 +1,53 @@
+meta {
+  name: 10 - Add TEXT Attribute
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/admin/categories/{{adminCategoryId}}/attributes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "key": "marque",
+    "label": "Marque du fabricant",
+    "type": "TEXT",
+    "required": false,
+    "displayOrder": 1
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("attrId", String(res.getBody().data.id));
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("key is marque", function() {
+    expect(res.getBody().data.key).to.equal("marque");
+  });
+  test("type is TEXT", function() {
+    expect(res.getBody().data.type).to.equal("TEXT");
+  });
+  test("inherited is false (own attribute)", function() {
+    expect(res.getBody().data.inherited).to.equal(false);
+  });
+  test("attrId saved", function() {
+    expect(res.getBody().data.id).to.be.a("number");
+  });
+}

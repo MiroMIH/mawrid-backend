@@ -32,4 +32,10 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
+  test("firstName updated", function() {
+    expect(res.getBody().data.firstName).to.equal("Ali");
+  });
+  test("lastName updated", function() {
+    expect(res.getBody().data.lastName).to.equal("Benali");
+  });
 }

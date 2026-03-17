@@ -26,12 +26,24 @@ body:json {
 }
 
 docs {
+  note: Login as SUPPLIER before calling this.
   status values: DISPONIBLE | INDISPONIBLE
-  note: Login as SUPPLIER before calling this endpoint
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("reponseId", String(res.getBody().data.id));
+  }
 }
 
 tests {
   test("status 201", function() {
     expect(res.getStatus()).to.equal(201);
+  });
+  test("status is DISPONIBLE", function() {
+    expect(res.getBody().data.status).to.equal("DISPONIBLE");
+  });
+  test("reponseId saved", function() {
+    expect(bru.getEnvVar("reponseId")).to.exist;
   });
 }

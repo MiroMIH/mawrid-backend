@@ -1,0 +1,45 @@
+meta {
+  name: 14 - Move Category to New Parent
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{baseUrl}}/admin/categories/{{childCategoryId}}/move
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "newParentId": 2
+  }
+}
+
+docs {
+  note: Moves childCategory (and its grandchild) to seeded category id=2.
+        After this, verify GET /categories/{{grandCategoryId}} path starts with 2.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("parentId updated to 2", function() {
+    expect(res.getBody().data.parentId).to.equal(2);
+  });
+  test("depth is still 1", function() {
+    expect(res.getBody().data.depth).to.equal(1);
+  });
+  test("path starts with new parent", function() {
+    expect(res.getBody().data.path.startsWith("2.")).to.equal(true);
+  });
+}

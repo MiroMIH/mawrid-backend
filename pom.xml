@@ -201,6 +201,19 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <environmentVariables>
+                        <DOCKER_HOST>npipe:////./pipe/docker_engine</DOCKER_HOST>
+                        <DOCKER_API_VERSION>1.47</DOCKER_API_VERSION>
+                    </environmentVariables>
+                    <systemPropertyVariables>
+                        <docker.host>npipe:////./pipe/docker_engine</docker.host>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

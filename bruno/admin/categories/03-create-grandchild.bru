@@ -1,0 +1,53 @@
+meta {
+  name: 03 - Create Grandchild Category
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/admin/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Pompes Centrifuges",
+    "parentId": {{childCategoryId}}
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("grandCategoryId", String(res.getBody().data.id));
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("grandCategoryId saved", function() {
+    expect(res.getBody().data.id).to.be.a("number");
+  });
+  test("depth is 2", function() {
+    expect(res.getBody().data.depth).to.equal(2);
+  });
+  test("path has 3 segments", function() {
+    const parts = res.getBody().data.path.split(".");
+    expect(parts.length).to.equal(3);
+  });
+  test("path starts with root.child", function() {
+    const body = res.getBody().data;
+    const expected = bru.getEnvVar("adminCategoryId") + "." + bru.getEnvVar("childCategoryId");
+    expect(body.path.startsWith(expected)).to.equal(true);
+  });
+}

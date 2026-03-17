@@ -1,7 +1,7 @@
 meta {
-  name: Simulate Matching (Admin)
+  name: Simulate Matching
   type: http
-  seq: 4
+  seq: 2
 }
 
 post {
@@ -21,8 +21,8 @@ headers {
 body:json {
   {
     "categoryId": 1,
-    "wilaya": "Alger",
-    "deadline": "2026-04-30",
+    "wilaya": "16",
+    "deadline": "2026-06-30",
     "quantity": 100
   }
 }
@@ -30,5 +30,8 @@ body:json {
 tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
+  });
+  test("data is present", function() {
+    expect(res.getBody().data).to.exist;
   });
 }

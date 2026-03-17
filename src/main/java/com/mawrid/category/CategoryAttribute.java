@@ -42,6 +42,13 @@ public class CategoryAttribute {
     @Builder.Default
     private int displayOrder = 0;
 
+    /**
+     * JSON array of allowed values — only relevant when type = SELECT.
+     * Example: '["SKF","FAG","NSK","Timken"]'
+     */
+    @Column(columnDefinition = "TEXT")
+    private String options;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

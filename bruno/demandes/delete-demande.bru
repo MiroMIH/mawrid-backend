@@ -15,7 +15,7 @@ auth:bearer {
 }
 
 tests {
-  test("status 200", function() {
-    expect(res.getStatus()).to.equal(200);
+  test("status 204 or 200", function() {
+    expect([200, 204]).to.include(res.getStatus());
   });
 }

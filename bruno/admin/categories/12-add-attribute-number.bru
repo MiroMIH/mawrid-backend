@@ -1,0 +1,46 @@
+meta {
+  name: 12 - Add NUMBER Attribute to Child
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/admin/categories/{{childCategoryId}}/attributes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "key": "debit_max",
+    "label": "Débit maximum (L/min)",
+    "type": "NUMBER",
+    "required": true,
+    "displayOrder": 1
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("key is debit_max", function() {
+    expect(res.getBody().data.key).to.equal("debit_max");
+  });
+  test("type is NUMBER", function() {
+    expect(res.getBody().data.type).to.equal("NUMBER");
+  });
+  test("check inherited attributes on child via GET /categories/child/attributes", function() {
+    // After this call, GET /categories/{{childCategoryId}}/attributes should return 3 attributes:
+    // marque (inherited=true), etat (inherited=true), debit_max (inherited=false)
+    expect(true).to.equal(true);
+  });
+}

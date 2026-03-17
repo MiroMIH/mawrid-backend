@@ -1,0 +1,26 @@
+meta {
+  name: 20 - Delete Attribute
+  type: http
+  seq: 20
+}
+
+delete {
+  url: {{baseUrl}}/admin/categories/{{adminCategoryId}}/attributes/{{attrId2}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+docs {
+  note: Deletes the SELECT 'etat' attribute (attrId2).
+        Will fail with 422 if the attribute key is used in any existing demande.
+}
+
+tests {
+  test("status 204", function() {
+    expect(res.getStatus()).to.equal(204);
+  });
+}

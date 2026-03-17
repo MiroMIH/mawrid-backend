@@ -1,0 +1,58 @@
+meta {
+  name: 11 - Add SELECT Attribute with Options
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/admin/categories/{{adminCategoryId}}/attributes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "key": "etat",
+    "label": "État du produit",
+    "type": "SELECT",
+    "required": true,
+    "displayOrder": 2,
+    "options": ["Neuf", "Occasion", "Reconditionné"]
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("attrId2", String(res.getBody().data.id));
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("key is etat", function() {
+    expect(res.getBody().data.key).to.equal("etat");
+  });
+  test("type is SELECT", function() {
+    expect(res.getBody().data.type).to.equal("SELECT");
+  });
+  test("options has 3 values", function() {
+    expect(res.getBody().data.options).to.be.an("array");
+    expect(res.getBody().data.options.length).to.equal(3);
+  });
+  test("options contain Neuf", function() {
+    expect(res.getBody().data.options).to.include("Neuf");
+  });
+  test("required is true", function() {
+    expect(res.getBody().data.required).to.equal(true);
+  });
+}

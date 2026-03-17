@@ -18,4 +18,12 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
+  test("data has content array", function() {
+    expect(res.getBody().data.content).to.be.an("array");
+  });
+  test("pagination info present", function() {
+    const data = res.getBody().data;
+    expect(data.totalElements).to.be.a("number");
+    expect(data.totalPages).to.be.a("number");
+  });
 }

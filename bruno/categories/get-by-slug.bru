@@ -1,0 +1,26 @@
+meta {
+  name: Get Category by Slug
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/categories/slug/{{categorySlug}}
+  body: none
+  auth: none
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("slug matches", function() {
+    expect(res.getBody().data.slug).to.equal(bru.getEnvVar("categorySlug"));
+  });
+  test("id is number", function() {
+    expect(res.getBody().data.id).to.be.a("number");
+  });
+  test("name is string", function() {
+    expect(res.getBody().data.name).to.be.a("string");
+  });
+}

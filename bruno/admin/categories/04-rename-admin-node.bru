@@ -1,0 +1,38 @@
+meta {
+  name: 04 - Rename Category (ADMIN_CREATED)
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/admin/categories/{{childCategoryId}}/rename
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Pompes & Compresseurs",
+    "forceRename": false
+  }
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("name updated", function() {
+    expect(res.getBody().data.name).to.equal("Pompes & Compresseurs");
+  });
+  test("slug updated", function() {
+    expect(res.getBody().data.slug).to.be.a("string");
+  });
+}

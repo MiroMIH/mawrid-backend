@@ -18,4 +18,13 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
+  test("email is string", function() {
+    expect(res.getBody().data.email).to.be.a("string");
+  });
+  test("role is present", function() {
+    expect(res.getBody().data.role).to.be.a("string");
+  });
+  test("firstName is present", function() {
+    expect(res.getBody().data.firstName).to.be.a("string");
+  });
 }
