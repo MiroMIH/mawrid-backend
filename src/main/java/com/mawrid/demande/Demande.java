@@ -64,6 +64,9 @@ public class Demande {
     @Builder.Default
     private List<DemandeAttribute> attributes = new ArrayList<>();
 
+    private LocalDateTime closedAt;
+    private LocalDateTime expiredAt;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdAt;

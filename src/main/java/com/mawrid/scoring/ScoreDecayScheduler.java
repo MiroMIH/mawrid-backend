@@ -51,7 +51,8 @@ public class ScoreDecayScheduler {
     private void expireDeadlinedDemandes() {
         List<Demande> expired = demandeRepository.findExpiredOpen(LocalDate.now());
         for (Demande d : expired) {
-            d.setStatus(DemandeStatus.CLOSED);
+            d.setStatus(DemandeStatus.EXPIRED);
+            d.setExpiredAt(LocalDateTime.now());
             log.info("Auto-expired demande {} (deadline: {})", d.getId(), d.getDeadline());
         }
         demandeRepository.saveAll(expired);

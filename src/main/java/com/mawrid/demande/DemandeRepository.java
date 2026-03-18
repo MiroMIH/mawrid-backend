@@ -17,6 +17,8 @@ public interface DemandeRepository extends JpaRepository<Demande, UUID> {
 
     Page<Demande> findByBuyerAndStatus(User buyer, DemandeStatus status, Pageable pageable);
 
+    Page<Demande> findByStatus(DemandeStatus status, Pageable pageable);
+
     boolean existsByBuyerAndCategoryIdAndStatus(User buyer, Long categoryId, DemandeStatus status);
 
     /** Demandes that passed their deadline and are still OPEN */

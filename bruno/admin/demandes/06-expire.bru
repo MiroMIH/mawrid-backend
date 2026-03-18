@@ -1,0 +1,31 @@
+meta {
+  name: Expire Demande Manually (Admin)
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/admin/demandes/{{demandeId}}/expire
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Admin/Superadmin only — marks a demande as EXPIRED manually.
+  Sets status to EXPIRED and records expiredAt timestamp.
+  Normally handled automatically by ScoreDecayScheduler nightly at 02:00.
+  Login as ADMIN before calling.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("status is EXPIRED", function() {
+    expect(res.getBody().data.status).to.equal("EXPIRED");
+  });
+}

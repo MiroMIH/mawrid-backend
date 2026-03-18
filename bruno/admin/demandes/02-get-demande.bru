@@ -1,0 +1,32 @@
+meta {
+  name: Get Demande Detail (Admin)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/admin/demandes/{{demandeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Admin/Superadmin only — returns full demande detail without ownership check.
+  Login as ADMIN before calling.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("id present", function() {
+    expect(res.getBody().data.id).to.exist;
+  });
+  test("title is string", function() {
+    expect(res.getBody().data.title).to.be.a("string");
+  });
+}

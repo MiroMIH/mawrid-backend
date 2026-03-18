@@ -52,6 +52,7 @@ public class DataInitializer implements ApplicationRunner {
     public void run(ApplicationArguments args) {
         seedCategories();
         seedSuperadmin();
+        seedTestUsers();
     }
 
     // ── Categories ────────────────────────────────────────────────────────────
@@ -129,6 +130,42 @@ public class DataInitializer implements ApplicationRunner {
                 .build());
         c.setPath(parent.getPath() + "." + c.getId());
         return categoryRepository.save(c);
+    }
+
+    // ── Test users ────────────────────────────────────────────────────────────
+
+    private void seedTestUsers() {
+        seedUserIfAbsent("buyer@test.com",    "Password1!", "Karim",  "Benali",   "SONATRACH Approvisionnements", "Alger",      Role.BUYER);
+        seedUserIfAbsent("buyer2@test.com",   "Password1!", "Amira",  "Cherif",   "COSIDER Construction",         "Annaba",     Role.BUYER);
+        seedUserIfAbsent("supplier@test.com", "Password1!", "Rachid", "Mekki",    "El Hidhab Roulements",         "Annaba",     Role.SUPPLIER);
+        seedUserIfAbsent("supplier2@test.com","Password1!", "Fatima", "Zouai",    "Mecatech Fournitures",         "Alger",      Role.SUPPLIER);
+        seedUserIfAbsent("supplier3@test.com","Password1!", "Hassan", "Boukhari", "TransAlgerie Logistique",      "Oran",       Role.SUPPLIER);
+    }
+
+    private void seedUserIfAbsent(String email, String password, String firstName, String lastName,
+                                  String company, String wilaya, Role role) {
+        String encoded = passwordEncoder.encode(password);
+        userRepository.findByEmail(email).ifPresentOrElse(
+                existing -> {
+                    existing.setPassword(encoded);
+                    existing.setEnabled(true);
+                    userRepository.save(existing);
+                    log.info("Test user password reset: {} ({})", email, role);
+                },
+                () -> {
+                    userRepository.save(User.builder()
+                            .email(email)
+                            .password(encoded)
+                            .firstName(firstName)
+                            .lastName(lastName)
+                            .companyName(company)
+                            .wilaya(wilaya)
+                            .role(role)
+                            .enabled(true)
+                            .build());
+                    log.info("Test user created: {} ({})", email, role);
+                }
+        );
     }
 
     // ── Superadmin ────────────────────────────────────────────────────────────

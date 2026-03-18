@@ -1,17 +1,17 @@
 meta {
   name: Submit Reponse (Supplier)
   type: http
-  seq: 1
+  seq: 2
 }
 
 post {
-  url: {{baseUrl}}/demandes/{{demandeId}}/reponses
+  url: {{baseUrl}}/reponses/{{demandeId}}
   body: json
   auth: bearer
 }
 
 auth:bearer {
-  token: {{accessToken}}
+  token: {{supplierToken}}
 }
 
 headers {
@@ -26,7 +26,9 @@ body:json {
 }
 
 docs {
-  note: Login as SUPPLIER before calling this.
+  Supplier only — submit availability response to a matched demande.
+  Must be matched (have a score record) for this demande.
+  Login as SUPPLIER before calling.
   status values: DISPONIBLE | INDISPONIBLE
 }
 

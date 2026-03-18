@@ -1,5 +1,5 @@
 meta {
-  name: Close Demande via /close endpoint (Buyer)
+  name: Close Demande (Buyer)
   type: http
   seq: 5
 }
@@ -15,15 +15,16 @@ auth:bearer {
 }
 
 docs {
-  Deprecated: use close-demande.bru instead.
-  Buyer only — closes an OPEN demande. Use PATCH /demandes/{id}/close.
+  Buyer only — manually closes an OPEN demande.
+  Sets status to CLOSED and records closedAt timestamp.
+  Only works if demande is currently OPEN.
 }
 
 tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
-  test("status updated to CLOSED", function() {
+  test("status is CLOSED", function() {
     expect(res.getBody().data.status).to.equal("CLOSED");
   });
 }

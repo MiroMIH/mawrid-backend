@@ -1,17 +1,21 @@
 meta {
-  name: List Demandes
+  name: List My Demandes (Buyer)
   type: http
   seq: 1
 }
 
 get {
-  url: {{baseUrl}}/demandes?page=0&size=20&sort=createdAt,desc
+  url: {{baseUrl}}/demandes/my?page=0&size=20&sort=createdAt,desc
   body: none
   auth: bearer
 }
 
 auth:bearer {
-  token: {{accessToken}}
+  token: {{buyerToken}}
+}
+
+docs {
+  Buyer only. Optional ?status=OPEN|CLOSED|CANCELLED|EXPIRED filter.
 }
 
 tests {

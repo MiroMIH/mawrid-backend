@@ -1,0 +1,35 @@
+meta {
+  name: Demande Platform Stats (Admin)
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/admin/demandes/stats
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Admin/Superadmin only — returns counts by status: OPEN, CLOSED, CANCELLED, EXPIRED, and total.
+  Login as ADMIN before calling.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("totalOpen is number", function() {
+    expect(res.getBody().data.totalOpen).to.be.a("number");
+  });
+  test("totalAll is number", function() {
+    expect(res.getBody().data.totalAll).to.be.a("number");
+  });
+  test("totalExpired is number", function() {
+    expect(res.getBody().data.totalExpired).to.be.a("number");
+  });
+}

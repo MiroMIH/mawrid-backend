@@ -24,9 +24,9 @@ body:json {
 script:post-response {
   if (res.getStatus() === 200) {
     const data = res.getBody().data;
-    bru.setEnvVar("accessToken", data.accessToken);
-    bru.setEnvVar("refreshToken", data.refreshToken);
+    bru.setEnvVar("adminToken", data.accessToken);
     bru.setEnvVar("userId", data.userId);
+    console.log("adminToken saved");
   }
 }
 
@@ -34,10 +34,11 @@ tests {
   test("status 200", function() {
     expect(res.getStatus()).to.equal(200);
   });
-  test("accessToken is string", function() {
-    expect(res.getBody().data.accessToken).to.be.a("string");
+  test("role is SUPERADMIN or ADMIN", function() {
+    const role = res.getBody().data.role;
+    expect(["ADMIN","SUPERADMIN"]).to.include(role);
   });
-  test("token saved to env", function() {
-    expect(bru.getEnvVar("accessToken")).to.be.a("string");
+  test("adminToken saved to env", function() {
+    expect(bru.getEnvVar("adminToken")).to.be.a("string");
   });
 }

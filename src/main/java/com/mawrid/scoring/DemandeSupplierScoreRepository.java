@@ -2,6 +2,8 @@ package com.mawrid.scoring;
 
 import com.mawrid.demande.Demande;
 import com.mawrid.demande.DemandeStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,6 +29,24 @@ public interface DemandeSupplierScoreRepository extends JpaRepository<DemandeSup
     List<DemandeSupplierScore> findSupplierFeed(
             @Param("supplierId") UUID supplierId,
             @Param("status") DemandeStatus status
+    );
+
+    /** Paginated supplier feed with optional category filter */
+    @Query("""
+            SELECT s FROM DemandeSupplierScore s
+            JOIN FETCH s.demande d
+            JOIN FETCH d.buyer
+            JOIN FETCH d.category
+            WHERE s.supplier.id = :supplierId
+              AND d.status = :status
+              AND (:categoryId IS NULL OR d.category.id = :categoryId)
+            ORDER BY s.finalScore DESC
+            """)
+    Page<DemandeSupplierScore> findSupplierFeedPaged(
+            @Param("supplierId") UUID supplierId,
+            @Param("status") DemandeStatus status,
+            @Param("categoryId") Long categoryId,
+            Pageable pageable
     );
 
     /** All open demande scores for a supplier (for recomputation after category update) */

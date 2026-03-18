@@ -1,0 +1,30 @@
+meta {
+  name: Force Close Demande (Admin)
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/admin/demandes/{{demandeId}}/force-close
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Admin/Superadmin only — force closes any demande regardless of status.
+  Sets status to CLOSED and records closedAt timestamp.
+  Login as ADMIN before calling.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("status is CLOSED", function() {
+    expect(res.getBody().data.status).to.equal("CLOSED");
+  });
+}

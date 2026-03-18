@@ -1,5 +1,5 @@
 meta {
-  name: Get Demande by ID
+  name: Get Demande by ID (Owner)
   type: http
   seq: 2
 }
@@ -11,7 +11,11 @@ get {
 }
 
 auth:bearer {
-  token: {{accessToken}}
+  token: {{buyerToken}}
+}
+
+docs {
+  Buyer only — returns full demande detail. Must be owner.
 }
 
 tests {
@@ -25,7 +29,7 @@ tests {
     expect(res.getBody().data.title).to.be.a("string");
   });
   test("status is valid", function() {
-    const validStatuses = ["OPEN", "CLOSED", "CANCELLED"];
+    const validStatuses = ["OPEN", "CLOSED", "CANCELLED", "EXPIRED"];
     expect(validStatuses).to.include(res.getBody().data.status);
   });
   test("categoryId present", function() {

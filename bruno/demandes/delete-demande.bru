@@ -1,7 +1,7 @@
 meta {
-  name: Delete Demande (Buyer/Admin)
+  name: Cancel Demande (Buyer)
   type: http
-  seq: 5
+  seq: 6
 }
 
 delete {
@@ -11,11 +11,20 @@ delete {
 }
 
 auth:bearer {
-  token: {{accessToken}}
+  token: {{buyerToken}}
+}
+
+docs {
+  Buyer only — cancels an OPEN demande (sets status to CANCELLED).
+  Will fail with 409 if any supplier has already responded as DISPONIBLE.
+  Only works if demande is currently OPEN.
 }
 
 tests {
-  test("status 204 or 200", function() {
-    expect([200, 204]).to.include(res.getStatus());
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("success message", function() {
+    expect(res.getBody().message).to.equal("Demande cancelled");
   });
 }

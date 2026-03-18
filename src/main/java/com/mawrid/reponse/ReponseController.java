@@ -1,6 +1,7 @@
 package com.mawrid.reponse;
 
 import com.mawrid.common.response.ApiResponse;
+import com.mawrid.demande.dto.DemandeSummaryResponse;
 import com.mawrid.reponse.dto.ReponseRequest;
 import com.mawrid.reponse.dto.ReponseResponse;
 import com.mawrid.user.User;
@@ -21,17 +22,36 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/demandes/{demandeId}/reponses")
+@RequestMapping("/api/v1/reponses")
 @RequiredArgsConstructor
-@Tag(name = "Reponses", description = "Supplier responses to procurement requests")
+@Tag(name = "Réponses", description = "Supplier feed and responses")
 @SecurityRequirement(name = "bearerAuth")
+@PreAuthorize("hasRole('SUPPLIER')")
 public class ReponseController {
 
     private final ReponseService reponseService;
 
-    @PostMapping
-    @PreAuthorize("hasRole('SUPPLIER')")
-    @Operation(summary = "Respond to a demande (supplier only)")
+    @GetMapping("/feed")
+    @Operation(summary = "Get supplier's personalized demande feed ordered by score")
+    public ResponseEntity<ApiResponse<Page<DemandeSummaryResponse>>> getFeed(
+            @AuthenticationPrincipal User supplier,
+            @RequestParam(required = false) Long categoryId,
+            @PageableDefault(size = 20) Pageable pageable
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(reponseService.getSupplierFeed(supplier, categoryId, pageable)));
+    }
+
+    @GetMapping("/feed/{demandeId}")
+    @Operation(summary = "Get single demande detail for supplier")
+    public ResponseEntity<ApiResponse<DemandeSummaryResponse>> getFeedItem(
+            @PathVariable UUID demandeId,
+            @AuthenticationPrincipal User supplier
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(reponseService.getFeedItem(demandeId, supplier)));
+    }
+
+    @PostMapping("/{demandeId}")
+    @Operation(summary = "Submit response (DISPONIBLE or INDISPONIBLE)")
     public ResponseEntity<ApiResponse<ReponseResponse>> respond(
             @PathVariable UUID demandeId,
             @Valid @RequestBody ReponseRequest request,
@@ -41,15 +61,22 @@ public class ReponseController {
                 .body(ApiResponse.ok(reponseService.respond(demandeId, request, supplier), "Response submitted"));
     }
 
-    @GetMapping
-    @PreAuthorize("hasRole('BUYER') or hasAnyRole('ADMIN', 'SUPERADMIN')")
-    @Operation(summary = "Get DISPONIBLE suppliers for a demande (buyer only)")
-    public ResponseEntity<ApiResponse<Page<ReponseResponse>>> getAvailable(
+    @PatchMapping("/{demandeId}")
+    @Operation(summary = "Update response (only within 1h of initial submission)")
+    public ResponseEntity<ApiResponse<ReponseResponse>> updateResponse(
             @PathVariable UUID demandeId,
-            @AuthenticationPrincipal User buyer,
+            @Valid @RequestBody ReponseRequest request,
+            @AuthenticationPrincipal User supplier
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(reponseService.updateResponse(demandeId, request, supplier)));
+    }
+
+    @GetMapping("/my")
+    @Operation(summary = "List all my responses (paginated)")
+    public ResponseEntity<ApiResponse<Page<ReponseResponse>>> listMy(
+            @AuthenticationPrincipal User supplier,
             @PageableDefault(size = 20) Pageable pageable
     ) {
-        return ResponseEntity.ok(ApiResponse.ok(
-                reponseService.getAvailableSuppliers(demandeId, buyer, pageable)));
+        return ResponseEntity.ok(ApiResponse.ok(reponseService.listMyReponses(supplier, pageable)));
     }
 }

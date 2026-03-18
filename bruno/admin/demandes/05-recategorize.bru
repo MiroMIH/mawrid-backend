@@ -1,0 +1,40 @@
+meta {
+  name: Recategorize Demande (Admin)
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{baseUrl}}/admin/demandes/{{demandeId}}/recategorize
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "newCategoryId": 1
+  }
+}
+
+docs {
+  Admin/Superadmin only — moves a demande to a different category and re-runs matching.
+  This triggers async matching orchestration for the new category.
+  Login as ADMIN before calling.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("categoryId updated", function() {
+    expect(res.getBody().data.categoryId).to.be.a("number");
+  });
+}

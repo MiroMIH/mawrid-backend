@@ -1,22 +1,22 @@
 meta {
-  name: List My Responses (Supplier)
+  name: Get Demande Responses (Buyer)
   type: http
   seq: 4
 }
 
 get {
-  url: {{baseUrl}}/reponses/my?page=0&size=20
+  url: {{baseUrl}}/demandes/{{demandeId}}/reponses?page=0&size=20
   body: none
   auth: bearer
 }
 
 auth:bearer {
-  token: {{supplierToken}}
+  token: {{buyerToken}}
 }
 
 docs {
-  Supplier only — lists all responses the authenticated supplier has submitted.
-  Login as SUPPLIER before calling.
+  Buyer only — returns all supplier responses for this demande, ranked by score.
+  supplierScore field shows the computed matching score for each supplier.
 }
 
 tests {

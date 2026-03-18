@@ -51,7 +51,11 @@
       "Bash(PGPASSWORD=mawrid_dev_pass_123 psql -h localhost -U mawrid -d mawrid -c \"\\\\d categories\")",
       "Bash(cmd /c \"netstat -ano | findstr LISTENING | findstr :8080\")",
       "Bash(cmd /c \"taskkill /IM java.exe /F 2>nul & echo done\")",
-      "Bash(cmd /c \"netstat -ano | findstr :8080\"\ncmd /c \"netstat -ano | findstr :808\")"
+      "Bash(cmd /c \"netstat -ano | findstr :8080\"\ncmd /c \"netstat -ano | findstr :808\")",
+      "Bash(docker ps:*)",
+      "Bash(redis-cli -p 6379 -a redis_secret ping)",
+      "Bash(redis-cli -p 6379 ping)",
+      "Bash(docker exec:*)"
     ]
   }
 }

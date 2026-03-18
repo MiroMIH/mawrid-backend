@@ -1,0 +1,31 @@
+meta {
+  name: Get Score Breakdown (Admin)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/admin/demandes/{{demandeId}}/scores
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Admin/Superadmin only — returns score breakdown for all matched suppliers on a demande.
+  Shows: categoryScore, proximityScore, urgencyScore, buyerScore, quantityScore, baseScore, decayFactor, finalScore.
+  notificationTier: IMMEDIATE (>=80) | DELAYED_15MIN (>=50) | DELAYED_1H (>=30) | FEED_ONLY.
+  Login as ADMIN before calling.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("data is array", function() {
+    expect(res.getBody().data).to.be.an("array");
+  });
+}

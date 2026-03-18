@@ -24,9 +24,10 @@ body:json {
 script:post-response {
   if (res.getStatus() === 200) {
     const data = res.getBody().data;
-    bru.setEnvVar("accessToken", data.accessToken);
+    bru.setEnvVar("buyerToken", data.accessToken);
     bru.setEnvVar("refreshToken", data.refreshToken);
     bru.setEnvVar("userId", data.userId);
+    console.log("buyerToken saved");
   }
 }
 
@@ -37,10 +38,10 @@ tests {
   test("accessToken is string", function() {
     expect(res.getBody().data.accessToken).to.be.a("string");
   });
-  test("refreshToken is string", function() {
-    expect(res.getBody().data.refreshToken).to.be.a("string");
+  test("role is BUYER", function() {
+    expect(res.getBody().data.role).to.equal("BUYER");
   });
-  test("userId saved", function() {
-    expect(res.getBody().data.userId).to.exist;
+  test("buyerToken saved to env", function() {
+    expect(bru.getEnvVar("buyerToken")).to.be.a("string");
   });
 }

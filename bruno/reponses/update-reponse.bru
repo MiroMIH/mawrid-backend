@@ -1,0 +1,46 @@
+meta {
+  name: Update Response (Supplier, within 1h)
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/reponses/{{demandeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "INDISPONIBLE",
+    "note": "Stock épuisé pour cette période. Réessayez dans 2 semaines."
+  }
+}
+
+docs {
+  Supplier only — update a previously submitted response.
+  Only allowed within 1 hour of initial submission.
+  Will fail with 400 if more than 60 minutes have passed.
+  Login as SUPPLIER before calling.
+  status values: DISPONIBLE | INDISPONIBLE
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("status updated", function() {
+    expect(res.getBody().data.status).to.be.a("string");
+  });
+  test("updatedAt present", function() {
+    expect(res.getBody().data.updatedAt).to.exist;
+  });
+}
