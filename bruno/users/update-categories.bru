@@ -33,6 +33,6 @@ tests {
     expect(res.getStatus()).to.equal(200);
   });
   test("categories updated", function() {
-    expect(res.getBody().data.categories).to.be.an("array");
+    expect(res.getBody().data.categoryIds).to.be.an("array");
   });
 }
