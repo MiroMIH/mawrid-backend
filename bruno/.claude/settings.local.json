@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(for f:*)",
+      "Bash(do)",
+      "Bash(echo \"=== $f ===\")",
+      "Read(//c/Users/USER/Desktop/Mawrid/mawrid-backend/bruno/**)",
+      "Bash(done)",
+      "Bash(grep \"url:\" C:/Users/USER/Desktop/Mawrid/mawrid-backend/bruno/demandes/*.bru)",
+      "Bash(grep \"url:\" C:/Users/USER/Desktop/Mawrid/mawrid-backend/bruno/reponses/*.bru)",
+      "Bash(grep \"url:\" C:/Users/USER/Desktop/Mawrid/mawrid-backend/bruno/categories/*.bru)",
+      "Bash(grep \"url:\" C:/Users/USER/Desktop/Mawrid/mawrid-backend/bruno/users/*.bru)"
+    ]
+  }
+}

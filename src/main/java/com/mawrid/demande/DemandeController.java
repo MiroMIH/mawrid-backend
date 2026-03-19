@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/demandes")
+@RequestMapping("/api/v1/buyer/demandes")
 @RequiredArgsConstructor
 @Tag(name = "Demandes", description = "Buyer demande management")
 @SecurityRequirement(name = "bearerAuth")
@@ -42,7 +42,7 @@ public class DemandeController {
                 .body(ApiResponse.ok(demandeService.create(request, buyer), "Demande created"));
     }
 
-    @GetMapping("/my")
+    @GetMapping
     @Operation(summary = "List my demandes (paginated)")
     public ResponseEntity<ApiResponse<Page<DemandeSummaryResponse>>> listMy(
             @AuthenticationPrincipal User buyer,

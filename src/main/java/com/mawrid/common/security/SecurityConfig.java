@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -47,14 +46,14 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
                 .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/categories").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
                 // Swagger / actuator
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html",
                                  "/v3/api-docs/**", "/actuator/health").permitAll()
-                // Admin only
+                // Role-scoped paths
                 .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN", "SUPERADMIN")
-                // All other endpoints require authentication
+                .requestMatchers("/api/v1/buyer/**").hasRole("BUYER")
+                .requestMatchers("/api/v1/seller/**").hasRole("SUPPLIER")
+                // Shared authenticated endpoints (categories, user profile)
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())

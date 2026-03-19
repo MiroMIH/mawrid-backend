@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/reponses")
+@RequestMapping("/api/v1/seller")
 @RequiredArgsConstructor
 @Tag(name = "Réponses", description = "Supplier feed and responses")
 @SecurityRequirement(name = "bearerAuth")
@@ -50,7 +50,7 @@ public class ReponseController {
         return ResponseEntity.ok(ApiResponse.ok(reponseService.getFeedItem(demandeId, supplier)));
     }
 
-    @PostMapping("/{demandeId}")
+    @PostMapping("/reponses/{demandeId}")
     @Operation(summary = "Submit response (DISPONIBLE or INDISPONIBLE)")
     public ResponseEntity<ApiResponse<ReponseResponse>> respond(
             @PathVariable UUID demandeId,
@@ -61,7 +61,7 @@ public class ReponseController {
                 .body(ApiResponse.ok(reponseService.respond(demandeId, request, supplier), "Response submitted"));
     }
 
-    @PatchMapping("/{demandeId}")
+    @PatchMapping("/reponses/{demandeId}")
     @Operation(summary = "Update response (only within 1h of initial submission)")
     public ResponseEntity<ApiResponse<ReponseResponse>> updateResponse(
             @PathVariable UUID demandeId,
@@ -71,7 +71,7 @@ public class ReponseController {
         return ResponseEntity.ok(ApiResponse.ok(reponseService.updateResponse(demandeId, request, supplier)));
     }
 
-    @GetMapping("/my")
+    @GetMapping("/reponses")
     @Operation(summary = "List all my responses (paginated)")
     public ResponseEntity<ApiResponse<Page<ReponseResponse>>> listMy(
             @AuthenticationPrincipal User supplier,

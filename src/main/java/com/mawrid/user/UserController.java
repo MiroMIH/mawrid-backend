@@ -2,7 +2,6 @@ package com.mawrid.user;
 
 import com.mawrid.common.response.ApiResponse;
 import com.mawrid.user.dto.FcmTokenRequest;
-import com.mawrid.user.dto.UpdateCategoriesRequest;
 import com.mawrid.user.dto.UpdateUserRequest;
 import com.mawrid.user.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,17 +35,6 @@ public class UserController {
             @Valid @RequestBody UpdateUserRequest request
     ) {
         return ResponseEntity.ok(ApiResponse.ok(userService.update(user.getId(), request)));
-    }
-
-    @PatchMapping("/me/categories")
-    @PreAuthorize("hasRole('SUPPLIER')")
-    @Operation(summary = "Update supplier category subscriptions")
-    public ResponseEntity<ApiResponse<UserResponse>> updateCategories(
-            @AuthenticationPrincipal User user,
-            @Valid @RequestBody UpdateCategoriesRequest request
-    ) {
-        return ResponseEntity.ok(ApiResponse.ok(
-                userService.updateCategories(user.getId(), request, user)));
     }
 
     @PatchMapping("/me/fcm-token")
