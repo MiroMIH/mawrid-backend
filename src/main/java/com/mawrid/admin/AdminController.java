@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -38,10 +40,26 @@ public class AdminController {
         return ResponseEntity.ok(ApiResponse.ok(adminService.listUsers(pageable)));
     }
 
+    @GetMapping("/users/{id}")
+    @Operation(summary = "Get user detail by ID")
+    public ResponseEntity<ApiResponse<UserResponse>> getUser(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.ok(adminService.getUserById(id)));
+    }
+
     @PatchMapping("/users/{id}/toggle-enabled")
     @Operation(summary = "Enable or disable a user account")
     public ResponseEntity<ApiResponse<UserResponse>> toggleEnabled(@PathVariable UUID id) {
         return ResponseEntity.ok(ApiResponse.ok(adminService.toggleEnabled(id)));
+    }
+
+    @GetMapping("/users/export")
+    @Operation(summary = "Export all users as CSV")
+    public ResponseEntity<byte[]> exportUsersCsv() {
+        byte[] csv = adminService.exportUsersCsv();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=users.csv")
+                .contentType(MediaType.parseMediaType("text/csv; charset=UTF-8"))
+                .body(csv);
     }
 
     @GetMapping("/stats")

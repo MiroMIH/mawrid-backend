@@ -64,7 +64,16 @@
       "Bash(find /c/Users/USER/Desktop/Mawrid/mawrid-backend/src -name *Controller* -type f)",
       "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
       "Bash(find C:/Users/USER/Desktop/Mawrid/mawrid-admin -type f -name *auth* -o -name *api* -o -name *axios* -o -name *http* -o -name *client*)",
-      "Bash(find C:/Users/USER/Desktop/Mawrid/mawrid-web -type f -name *auth* -o -name *api* -o -name *axios* -o -name *http* -o -name *client*)"
+      "Bash(find C:/Users/USER/Desktop/Mawrid/mawrid-web -type f -name *auth* -o -name *api* -o -name *axios* -o -name *http* -o -name *client*)",
+      "Bash(xargs basename:*)",
+      "Bash(find C:UsersUSERDesktopMawridmawrid-backendsrcmainjavacommawriddemande -type f -name *.java)",
+      "Bash(find C:UsersUSERDesktopMawridmawrid-backendsrcmainjavacommawriduser -type f -name *.java)",
+      "Bash(find C:UsersUSERDesktopMawridmawrid-backendsrcmainjavacommawrid -path */reponse/* -o -path */response/*)",
+      "Bash(grep -E \"\\\\.\\(java\\)$\")",
+      "Bash(find C:UsersUSERDesktopMawridmawrid-backendsrcmainjavacommawridscoring -type f -name *.java)",
+      "Bash(find C:UsersUSERDesktopMawridmawrid-backendsrcmainjavacommawridmatching -type f -name *.java)",
+      "Bash(find C:UsersUSERDesktopMawridmawrid-backendsrcmainjavacommawridadmin -type f -name *.java)",
+      "Bash(find C:UsersUSERDesktopMawridmawrid-adminsrc -type f \\\\\\(-name *.tsx -o -name *.ts \\\\\\))"
     ]
   }
 }

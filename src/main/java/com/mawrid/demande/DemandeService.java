@@ -200,6 +200,11 @@ public class DemandeService {
     @Transactional
     public DemandeResponse expire(UUID id) {
         Demande demande = findOrThrow(id);
+        if (demande.getStatus() != DemandeStatus.OPEN) {
+            throw new BusinessException(
+                "Only OPEN demandes can be expired (current status: " + demande.getStatus() + ")",
+                HttpStatus.UNPROCESSABLE_ENTITY);
+        }
         demande.setStatus(DemandeStatus.EXPIRED);
         demande.setExpiredAt(LocalDateTime.now());
         return demandeMapper.toResponse(demandeRepository.save(demande));

@@ -51,7 +51,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("""
             SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END
             FROM Category c
-            WHERE c.parent = :parent AND LOWER(c.name) = LOWER(:name)
+            WHERE c.parent = :parent AND LOWER(c.name) = LOWER(CAST(:name AS string))
             """)
     boolean existsByParentAndNameIgnoreCase(@Param("parent") Category parent,
                                             @Param("name") String name);
@@ -59,7 +59,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("""
             SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END
             FROM Category c
-            WHERE c.parent IS NULL AND LOWER(c.name) = LOWER(:name)
+            WHERE c.parent IS NULL AND LOWER(c.name) = LOWER(CAST(:name AS string))
             """)
     boolean existsByParentNullAndNameIgnoreCase(@Param("name") String name);
 
@@ -71,7 +71,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query("""
             SELECT c FROM Category c
-            WHERE (:q IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :q, '%')))
+            WHERE (:q IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', CAST(:q AS string), '%')))
               AND (:depth IS NULL OR c.depth = :depth)
               AND (:nodeType IS NULL OR c.nodeType = :nodeType)
               AND (:active IS NULL OR c.active = :active)

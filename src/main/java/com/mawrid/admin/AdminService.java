@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +45,39 @@ public class AdminService {
     @Transactional(readOnly = true)
     public Page<UserResponse> listUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(userMapper::toResponse);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponse getUserById(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", userId));
+        return userMapper.toResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] exportUsersCsv() {
+        List<User> users = userRepository.findAll();
+        StringBuilder sb = new StringBuilder();
+        sb.append("id,email,firstName,lastName,phone,companyName,wilaya,role,enabled,createdAt\n");
+        for (User u : users) {
+            sb.append(u.getId()).append(',')
+              .append(csv(u.getEmail())).append(',')
+              .append(csv(u.getFirstName())).append(',')
+              .append(csv(u.getLastName())).append(',')
+              .append(csv(u.getPhone())).append(',')
+              .append(csv(u.getCompanyName())).append(',')
+              .append(csv(u.getWilaya())).append(',')
+              .append(u.getRole()).append(',')
+              .append(u.isEnabled()).append(',')
+              .append(u.getCreatedAt() != null ? u.getCreatedAt().toString() : "")
+              .append('\n');
+        }
+        return sb.toString().getBytes(StandardCharsets.UTF_8);
+    }
+
+    private String csv(String value) {
+        if (value == null) return "";
+        return "\"" + value.replace("\"", "\"\"") + "\"";
     }
 
     @Transactional
