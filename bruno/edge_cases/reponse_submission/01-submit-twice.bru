@@ -1,0 +1,28 @@
+meta {
+  name: Submit Twice
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/seller/reponses/{{demandeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+body:json {
+  {
+    "status": "DISPONIBLE",
+    "note": "First"
+  }
+}
+
+tests {
+  test("status 409", function() {
+    expect(res.getStatus()).to.equal(409);
+  });
+}

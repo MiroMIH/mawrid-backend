@@ -63,6 +63,34 @@ public class AuthService {
     }
 
     @Transactional(readOnly = true)
+    public AuthResponse loginBuyer(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+
+        if (user.getRole() != Role.BUYER) {
+            throw new BusinessException("Ce portail est réservé aux acheteurs", HttpStatus.FORBIDDEN);
+        }
+
+        return buildTokenResponse(user);
+    }
+
+    @Transactional(readOnly = true)
+    public AuthResponse loginAdmin(LoginRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+
+        if (user.getRole() != Role.ADMIN && user.getRole() != Role.SUPERADMIN) {
+            throw new BusinessException("Accès refusé : compte administrateur requis", HttpStatus.FORBIDDEN);
+        }
+
+        return buildTokenResponse(user);
+    }
+
+    @Transactional(readOnly = true)
     public AuthResponse refresh(RefreshRequest request) {
         String token = request.getRefreshToken();
 

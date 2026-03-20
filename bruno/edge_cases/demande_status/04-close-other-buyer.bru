@@ -1,0 +1,21 @@
+meta {
+  name: Close Other Buyer Demande
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/buyer/demandes/{{demandeId}}/close
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyer2Token}}
+}
+
+tests {
+  test("status 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

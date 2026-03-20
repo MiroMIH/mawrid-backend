@@ -1,0 +1,24 @@
+meta {
+  name: Setup Supplier Token
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{supplierEmail}}",
+    "password": "{{supplierPassword}}"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setEnvVar("supplierToken", res.getBody().data.accessToken);
+  }
+}

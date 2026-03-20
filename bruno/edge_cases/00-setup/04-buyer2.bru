@@ -1,0 +1,24 @@
+meta {
+  name: Setup Buyer 2 Token
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "buyer2@test.com",
+    "password": "Password1!"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setEnvVar("buyer2Token", res.getBody().data.accessToken);
+  }
+}

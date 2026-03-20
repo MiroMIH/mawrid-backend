@@ -1,0 +1,21 @@
+meta {
+  name: Size Negative
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/buyer/demandes?size=-1
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

@@ -1,5 +1,7 @@
 package com.mawrid.common.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +28,9 @@ public class RequestLoggingConfig {
     @Slf4j
     public static class RequestResponseLoggingFilter extends OncePerRequestFilter {
 
+        private static final ObjectMapper MAPPER = new ObjectMapper()
+                .enable(SerializationFeature.INDENT_OUTPUT);
+
         @Override
         protected void doFilterInternal(
                 @NonNull HttpServletRequest request,
@@ -46,21 +51,23 @@ public class RequestLoggingConfig {
                 String requestBody = new String(wrappedReq.getContentAsByteArray(), StandardCharsets.UTF_8);
                 String responseBody = new String(wrappedRes.getContentAsByteArray(), StandardCharsets.UTF_8);
 
-                // Mask Authorization header value
                 String authHeader = request.getHeader("Authorization");
                 String maskedAuth = authHeader != null
                         ? authHeader.substring(0, Math.min(authHeader.length(), 20)) + "..."
                         : "none";
 
                 log.info("""
+                        
                         ─── REQUEST ──────────────────────────────────────
                         {} {} [{}ms] → {}
                         Content-Type : {}
                         Authorization: {}
-                        Body         : {}
+                        Body         :
+                        {}
                         ─── RESPONSE ─────────────────────────────────────
                         Status : {}
-                        Body   : {}
+                        Body   :
+                        {}
                         ──────────────────────────────────────────────────""",
                         request.getMethod(),
                         request.getRequestURI() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""),
@@ -68,12 +75,22 @@ public class RequestLoggingConfig {
                         response.getStatus(),
                         request.getContentType(),
                         maskedAuth,
-                        requestBody.isBlank() ? "(empty)" : requestBody,
+                        requestBody.isBlank() ? "(empty)" : prettyJson(requestBody),
                         response.getStatus(),
-                        truncate(responseBody, 500)
+                        truncate(prettyJson(responseBody), 2000)
                 );
 
                 wrappedRes.copyBodyToResponse();
+            }
+        }
+
+        private String prettyJson(String raw) {
+            if (raw == null || raw.isBlank()) return "(empty)";
+            try {
+                Object parsed = MAPPER.readValue(raw, Object.class);
+                return MAPPER.writeValueAsString(parsed);
+            } catch (Exception e) {
+                return raw; // not JSON, return as-is
             }
         }
 

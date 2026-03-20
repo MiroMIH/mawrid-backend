@@ -38,6 +38,22 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.ok(authService.login(request), "Login successful"));
     }
 
+    @PostMapping("/buyer/login")
+    @Operation(summary = "Buyer login — rejects non-BUYER accounts")
+    public ResponseEntity<ApiResponse<AuthResponse>> buyerLogin(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(authService.loginBuyer(request), "Login successful"));
+    }
+
+    @PostMapping("/admin/login")
+    @Operation(summary = "Admin login — rejects non-ADMIN/SUPERADMIN accounts")
+    public ResponseEntity<ApiResponse<AuthResponse>> adminLogin(
+            @Valid @RequestBody LoginRequest request
+    ) {
+        return ResponseEntity.ok(ApiResponse.ok(authService.loginAdmin(request), "Login successful"));
+    }
+
     @PostMapping("/refresh")
     @Operation(summary = "Refresh access token using refresh token")
     public ResponseEntity<ApiResponse<AuthResponse>> refresh(

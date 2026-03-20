@@ -1,0 +1,21 @@
+meta {
+  name: Cancel Closed Demande
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/buyer/demandes/{{demandeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

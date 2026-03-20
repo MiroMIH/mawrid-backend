@@ -1,0 +1,35 @@
+meta {
+  name: 10-create-as-supplier
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Valid Title",
+    "quantity": 100,
+    "deadline": "2026-12-31",
+    "categoryId": 12,
+    "wilaya": "16"
+  }
+}
+
+tests {
+  test("status 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

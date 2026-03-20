@@ -1,0 +1,24 @@
+meta {
+  name: Setup Tokens
+  type: http
+  seq: 0
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "{{buyerEmail}}",
+    "password": "{{buyerPassword}}"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setEnvVar("buyerToken", res.getBody().data.accessToken);
+  }
+}

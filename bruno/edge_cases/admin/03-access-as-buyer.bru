@@ -1,0 +1,21 @@
+meta {
+  name: Access Admin as Buyer
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/admin/stats
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+tests {
+  test("status 403", function() {
+    expect(res.getStatus()).to.equal(403);
+  });
+}

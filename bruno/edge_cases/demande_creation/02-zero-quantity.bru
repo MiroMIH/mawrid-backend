@@ -1,0 +1,35 @@
+meta {
+  name: 02-zero-quantity
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Valid Title",
+    "quantity": 0,
+    "deadline": "2026-12-31",
+    "categoryId": 12,
+    "wilaya": "16"
+  }
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

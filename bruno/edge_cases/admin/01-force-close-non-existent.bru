@@ -1,0 +1,21 @@
+meta {
+  name: Force Close Non Existent
+  type: http
+  seq: 1
+}
+
+patch {
+  url: {{baseUrl}}/admin/demandes/00000000-0000-0000-0000-000000000000/force-close
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+tests {
+  test("status 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+}

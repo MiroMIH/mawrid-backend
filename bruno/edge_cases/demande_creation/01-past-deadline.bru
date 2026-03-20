@@ -1,0 +1,35 @@
+meta {
+  name: 01-past-deadline
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Valid Title",
+    "quantity": 100,
+    "deadline": "2020-01-01",
+    "categoryId": 12,
+    "wilaya": "16"
+  }
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

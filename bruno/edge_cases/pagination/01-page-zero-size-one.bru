@@ -1,0 +1,21 @@
+meta {
+  name: Page 0 Size 1
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/buyer/demandes?page=0&size=1
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+}

@@ -55,7 +55,16 @@
       "Bash(docker ps:*)",
       "Bash(redis-cli -p 6379 -a redis_secret ping)",
       "Bash(redis-cli -p 6379 ping)",
-      "Bash(docker exec:*)"
+      "Bash(docker exec:*)",
+      "Bash(grep -n \"seq:\" bruno/demandes/*.bru)",
+      "Bash(sort -t: -k3 -n)",
+      "Bash(xargs ls:*)",
+      "Bash(xargs grep:*)",
+      "Bash(find /c/Users/USER/Desktop/Mawrid/mawrid-backend -name *DemandController* -o -name *demandeapi*)",
+      "Bash(find /c/Users/USER/Desktop/Mawrid/mawrid-backend/src -name *Controller* -type f)",
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(find C:/Users/USER/Desktop/Mawrid/mawrid-admin -type f -name *auth* -o -name *api* -o -name *axios* -o -name *http* -o -name *client*)",
+      "Bash(find C:/Users/USER/Desktop/Mawrid/mawrid-web -type f -name *auth* -o -name *api* -o -name *axios* -o -name *http* -o -name *client*)"
     ]
   }
 }

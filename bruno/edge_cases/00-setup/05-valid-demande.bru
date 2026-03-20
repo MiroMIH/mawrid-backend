@@ -1,0 +1,44 @@
+meta {
+  name: Create Valid Demande
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Valid Test Demande",
+    "quantity": 100,
+    "deadline": "2026-12-31",
+    "categoryId": 12,
+    "wilaya": "16"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("demandeId", res.getBody().data.id);
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("demandeId saved to env", function() {
+    expect(bru.getEnvVar("demandeId")).to.exist;
+  });
+}
