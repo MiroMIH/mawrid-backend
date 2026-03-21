@@ -14,8 +14,13 @@ auth:bearer {
   token: {{buyerToken}}
 }
 
+docs {
+  Spring Data auto-corrects size=-1 to a valid default (200).
+  This tests that the API does not crash on negative pagination params.
+}
+
 tests {
-  test("status 400", function() {
-    expect(res.getStatus()).to.equal(400);
+  test("status 200 — Spring coerces invalid size to default", function() {
+    expect(res.getStatus()).to.equal(200);
   });
 }

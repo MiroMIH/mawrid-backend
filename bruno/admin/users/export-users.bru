@@ -1,0 +1,39 @@
+meta {
+  name: Export Users CSV (Admin)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/admin/users/export
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Admin only — downloads all users as a CSV file.
+  Response has Content-Type: text/csv and Content-Disposition: attachment; filename=users.csv
+  CSV columns: id, email, firstName, lastName, phone, companyName, wilaya, role, enabled, createdAt
+  Login as ADMIN before calling.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("Content-Type is text/csv", function() {
+    const ct = res.getHeaders()["content-type"];
+    expect(ct).to.include("text/csv");
+  });
+  test("response body is non-empty string", function() {
+    expect(res.getBody()).to.be.a("string");
+    expect(res.getBody().length).to.be.greaterThan(0);
+  });
+  test("CSV contains header row", function() {
+    expect(res.getBody()).to.include("email");
+  });
+}

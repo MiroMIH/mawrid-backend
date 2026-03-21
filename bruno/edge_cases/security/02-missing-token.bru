@@ -1,0 +1,25 @@
+meta {
+  name: Protected Route Without Token
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/users/me
+  body: none
+  auth: none
+}
+
+docs {
+  Access a protected endpoint with no Authorization header at all.
+  Expected: 401 Unauthorized.
+}
+
+tests {
+  test("status 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  test("no data in response", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+}

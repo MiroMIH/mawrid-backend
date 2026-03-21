@@ -1,0 +1,48 @@
+meta {
+  name: E2E Step 15 - Buyer Views Reponses on Their Demande
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{baseUrl}}/buyer/demandes/{{e2eDemandeId}}/reponses
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Buyer checks the responses on their demande.
+  Should see at least one DISPONIBLE response from the supplier.
+  This closes the full loop: category → subscribe → demande → reponse → buyer view.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("data.content is array (paginated)", function() {
+    expect(res.getBody().data.content).to.be.an("array");
+  });
+  test("at least one response received", function() {
+    expect(res.getBody().data.content.length).to.be.at.least(1);
+  });
+  test("has a DISPONIBLE response", function() {
+    const reponses = res.getBody().data.content;
+    const disponible = reponses.find(function(r) { return r.status === "DISPONIBLE"; });
+    expect(disponible).to.exist;
+  });
+  test("response has supplier info", function() {
+    const r = res.getBody().data.content[0];
+    expect(r.supplierId).to.exist;
+    expect(r.supplierCompanyName).to.be.a("string");
+  });
+  test("response has note with offer details", function() {
+    const r = res.getBody().data.content[0];
+    expect(r.note).to.be.a("string");
+    expect(r.note.length).to.be.above(0);
+  });
+}

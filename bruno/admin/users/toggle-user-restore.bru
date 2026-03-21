@@ -1,0 +1,30 @@
+meta {
+  name: Toggle User Restore (Re-enable)
+  type: http
+  seq: 3
+}
+
+patch {
+  url: {{baseUrl}}/admin/users/{{userId}}/toggle-enabled
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Runs immediately after toggle-user (seq 2) to restore the buyer to enabled=true.
+  After seq 2 disables the buyer, this file re-enables them.
+  Net effect: buyer stays enabled after the full sweep.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("buyer re-enabled", function() {
+    expect(res.getBody().data.enabled).to.equal(true);
+  });
+}

@@ -1,0 +1,39 @@
+meta {
+  name: Buyer Login via /auth/buyer/login
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/auth/buyer/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "{{buyerEmail}}",
+    "password": "{{buyerPassword}}"
+  }
+}
+
+docs {
+  A BUYER account should succeed when using the role-specific /auth/buyer/login endpoint.
+  Expected: 200 OK with tokens and role BUYER.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("role is BUYER", function() {
+    expect(res.getBody().data.role).to.equal("BUYER");
+  });
+  test("accessToken returned", function() {
+    expect(res.getBody().data.accessToken).to.be.a("string");
+  });
+}

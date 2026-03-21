@@ -1,0 +1,40 @@
+meta {
+  name: Submit Reponse to Nonexistent Demande
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/seller/reponses/00000000-0000-0000-0000-000000000099
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "DISPONIBLE",
+    "note": "This demande does not exist."
+  }
+}
+
+docs {
+  Supplier submits a reponse to a UUID that matches no demande.
+  Expected: 404 Not Found.
+}
+
+tests {
+  test("status 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+  test("no reponse created", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+}

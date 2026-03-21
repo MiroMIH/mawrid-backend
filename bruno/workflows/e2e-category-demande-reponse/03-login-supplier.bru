@@ -1,0 +1,39 @@
+meta {
+  name: E2E Step 3 - Login Supplier
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "{{supplierEmail}}",
+    "password": "{{supplierPassword}}"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setEnvVar("supplierToken", res.getBody().data.accessToken);
+    bru.setEnvVar("e2eSupplierId", String(res.getBody().data.userId));
+    console.log("[E2E] supplierToken saved");
+  }
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("supplierToken saved", function() {
+    expect(bru.getEnvVar("supplierToken")).to.be.a("string");
+  });
+}

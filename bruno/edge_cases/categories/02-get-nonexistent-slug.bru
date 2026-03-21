@@ -1,0 +1,32 @@
+meta {
+  name: Get Category Nonexistent Slug
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/categories/slug/this-slug-does-not-exist-xyz
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Request a category by a slug that does not match any category.
+  Expected: 404 Not Found.
+}
+
+tests {
+  test("status 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+  test("no category data returned", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+  test("error message present", function() {
+    expect(res.getBody().message).to.be.a("string");
+  });
+}

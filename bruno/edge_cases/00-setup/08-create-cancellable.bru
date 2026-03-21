@@ -1,0 +1,40 @@
+meta {
+  name: Setup Create Cancellable Demande
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Cancellable Edge Case Demande",
+    "quantity": 25,
+    "deadline": "2026-12-31",
+    "categoryId": 12,
+    "wilaya": "31"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("cancellableDemandeId", res.getBody().data.id);
+  }
+}
+
+docs {
+  Creates a fresh OPEN demande that will be cancelled in 09-cancel-cancellable.bru.
+  The cancellableDemandeId is then used in edge_cases/demande_status/07-cancel-cancelled.
+}

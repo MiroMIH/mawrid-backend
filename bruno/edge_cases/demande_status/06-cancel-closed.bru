@@ -1,0 +1,27 @@
+meta {
+  name: Cancel Already-Closed Demande (via closeableDemandeId)
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{baseUrl}}/buyer/demandes/{{closeableDemandeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Attempts to cancel (DELETE) a demande that is already in CLOSED state.
+  closeableDemandeId was created and closed in 00-setup/06 and 07.
+  Expected: 400 Bad Request (invalid state transition: cannot cancel a CLOSED demande).
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

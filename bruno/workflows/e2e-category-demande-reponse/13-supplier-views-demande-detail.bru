@@ -1,0 +1,39 @@
+meta {
+  name: E2E Step 13 - Supplier Views Demande Detail from Feed
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{baseUrl}}/seller/feed/{{e2eDemandeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+docs {
+  Supplier directly accesses the demande detail from the feed endpoint.
+  Returns 200 if the supplier is matched (has a score record).
+  Returns 403 if async matching hasn't run yet (no score).
+  We accept both: matching runs @Async and timing is non-deterministic.
+  The test is meaningful in CI where async runs quickly; locally it may be 403.
+}
+
+tests {
+  test("200 matched or 403 not yet matched (async timing)", function() {
+    expect([200, 403]).to.include(res.getStatus());
+  });
+  test("if 200: id is e2eDemandeId", function() {
+    if (res.getStatus() === 200) {
+      expect(String(res.getBody().data.id)).to.equal(bru.getEnvVar("e2eDemandeId"));
+    }
+  });
+  test("if 200: finalScore is a number", function() {
+    if (res.getStatus() === 200) {
+      expect(res.getBody().data.finalScore).to.be.a("number");
+    }
+  });
+}

@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/admin/categories/{{adminCategoryId}}/move
+  url: {{baseUrl}}/admin/categories/{{childCategoryId}}/move
   body: json
   auth: bearer
 }
@@ -26,6 +26,8 @@ body:json {
 
 docs {
   note: MUST return error — cannot move a node into its own subtree (cycle).
+  Moves childCategoryId into its own grandchild — this is always a cycle regardless of
+  what step 14 did to the parent relationship.
 }
 
 tests {

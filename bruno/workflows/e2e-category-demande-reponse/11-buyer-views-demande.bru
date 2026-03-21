@@ -1,0 +1,52 @@
+meta {
+  name: E2E Step 11 - Buyer Views Their Demande
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{baseUrl}}/buyer/demandes/{{e2eDemandeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Buyer reads back their just-created demande.
+  Verifies all fields and attribute values are correctly persisted.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("id matches e2eDemandeId", function() {
+    expect(String(res.getBody().data.id)).to.equal(bru.getEnvVar("e2eDemandeId"));
+  });
+  test("status is OPEN", function() {
+    expect(res.getBody().data.status).to.equal("OPEN");
+  });
+  test("title matches", function() {
+    expect(res.getBody().data.title).to.equal("Besoin de 3 pompes centrifuges industrielles");
+  });
+  test("attributes persisted", function() {
+    const attrs = res.getBody().data.attributes;
+    expect(attrs).to.be.an("array");
+    expect(attrs.length).to.be.at.least(2);
+  });
+  test("fabricant attribute value is Grundfos", function() {
+    const attrs = res.getBody().data.attributes;
+    const fabricant = attrs.find(function(a) { return a.key === "fabricant"; });
+    expect(fabricant).to.exist;
+    expect(fabricant.value).to.equal("Grundfos");
+  });
+  test("type_pompe attribute value is Centrifuge", function() {
+    const attrs = res.getBody().data.attributes;
+    const typePompe = attrs.find(function(a) { return a.key === "type_pompe"; });
+    expect(typePompe).to.exist;
+    expect(typePompe.value).to.equal("Centrifuge");
+  });
+}

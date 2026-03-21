@@ -1,0 +1,27 @@
+meta {
+  name: Cancel Already-Cancelled Demande (via cancellableDemandeId)
+  type: http
+  seq: 7
+}
+
+delete {
+  url: {{baseUrl}}/buyer/demandes/{{cancellableDemandeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Attempts to cancel a demande that is already in CANCELLED state.
+  cancellableDemandeId was created and cancelled in 00-setup/08 and 09.
+  Expected: 400 Bad Request (invalid state transition: CANCELLED → CANCELLED).
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

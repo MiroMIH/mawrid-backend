@@ -1,0 +1,60 @@
+meta {
+  name: E2E Step 7 - Add SELECT Attribute to Category
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/admin/categories/{{e2eCategoryId}}/attributes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "key": "type_pompe",
+    "label": "Type de pompe",
+    "type": "SELECT",
+    "required": true,
+    "options": ["Centrifuge", "Submersible", "Péristaltique", "À piston"],
+    "displayOrder": 2
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("e2eAttrSelectId", String(res.getBody().data.id));
+    console.log("[E2E] Created SELECT attribute id=" + res.getBody().data.id);
+  } else if (res.getStatus() === 409) {
+    console.log("[E2E] SELECT attribute already exists (409) — idempotent");
+  }
+}
+
+docs {
+  Adds a SELECT attribute "type_pompe" (pump type) with 4 options.
+  Buyers will select one of these when creating a demande.
+}
+
+tests {
+  test("201 created or 409 already exists", function() {
+    expect([201, 409]).to.include(res.getStatus());
+  });
+  test("if 201: key is type_pompe", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.key).to.equal("type_pompe");
+    }
+  });
+  test("if 201: type is SELECT", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.type).to.equal("SELECT");
+    }
+  });
+}

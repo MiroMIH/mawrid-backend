@@ -1,0 +1,57 @@
+meta {
+  name: Setup - Create Open Demande for Reponse Tests
+  type: http
+  seq: 0
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Demande pour test de réponse",
+    "description": "Créée spécifiquement pour tester le flux de réponse fournisseur",
+    "quantity": 50,
+    "unit": "unités",
+    "deadline": "2026-12-31",
+    "categoryId": 1,
+    "wilaya": "16",
+    "attributes": []
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("reponseDemandeId", String(res.getBody().data.id));
+    console.log("reponseDemandeId saved: " + res.getBody().data.id);
+  }
+}
+
+docs {
+  Creates a fresh OPEN demande to be used by submit-reponse and update-reponse.
+  Runs before the reponse submission tests so the demande is always OPEN.
+  reponseDemandeId is distinct from demandeId (which gets closed earlier).
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("reponseDemandeId saved", function() {
+    expect(bru.getEnvVar("reponseDemandeId")).to.exist;
+  });
+  test("status is OPEN", function() {
+    expect(res.getBody().data.status).to.equal("OPEN");
+  });
+}

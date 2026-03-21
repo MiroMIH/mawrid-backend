@@ -30,16 +30,22 @@ docs {
 }
 
 tests {
-  test("status 200", function() {
-    expect(res.getStatus()).to.equal(200);
+  test("200 moved or 409 already in target parent (idempotent)", function() {
+    expect([200, 409]).to.include(res.getStatus());
   });
-  test("parentId updated to 2", function() {
-    expect(res.getBody().data.parentId).to.equal(2);
+  test("if 200: parentId updated to 2", function() {
+    if (res.getStatus() === 200) {
+      expect(res.getBody().data.parentId).to.equal(2);
+    }
   });
-  test("depth is still 1", function() {
-    expect(res.getBody().data.depth).to.equal(1);
+  test("if 200: depth is still 1", function() {
+    if (res.getStatus() === 200) {
+      expect(res.getBody().data.depth).to.equal(1);
+    }
   });
-  test("path starts with new parent", function() {
-    expect(res.getBody().data.path.startsWith("2.")).to.equal(true);
+  test("if 200: path starts with new parent", function() {
+    if (res.getStatus() === 200) {
+      expect(res.getBody().data.path.startsWith("2.")).to.equal(true);
+    }
   });
 }

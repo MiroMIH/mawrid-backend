@@ -1,0 +1,32 @@
+meta {
+  name: E2E Step 16 - Buyer Closes Demande (Satisfied)
+  type: http
+  seq: 16
+}
+
+patch {
+  url: {{baseUrl}}/buyer/demandes/{{e2eDemandeId}}/close
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Buyer closes the demande after reviewing the supplier's offer.
+  This marks the demande as CLOSED and completes the full workflow.
+  Accepts 200 (closed now) or 400 (already closed from prior run).
+}
+
+tests {
+  test("200 closed or 400 already closed (idempotent)", function() {
+    expect([200, 400]).to.include(res.getStatus());
+  });
+  test("if 200: status is CLOSED", function() {
+    if (res.getStatus() === 200) {
+      expect(res.getBody().data.status).to.equal("CLOSED");
+    }
+  });
+}

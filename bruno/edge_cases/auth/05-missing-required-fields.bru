@@ -1,0 +1,38 @@
+meta {
+  name: Register Missing Required Fields
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "password": "Password1!",
+    "firstName": "NoEmail",
+    "lastName": "User",
+    "role": "BUYER"
+  }
+}
+
+docs {
+  Attempt to register without the required email field.
+  Expected: 400 Bad Request (Bean Validation failure).
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  test("no token in response", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+}

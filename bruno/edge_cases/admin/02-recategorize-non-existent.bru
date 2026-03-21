@@ -20,8 +20,15 @@ body:json {
   }
 }
 
+docs {
+  Category 9999 does not exist. Server returns 404 (Category not found).
+}
+
 tests {
-  test("status 400", function() {
-    expect(res.getStatus()).to.equal(400);
+  test("status 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+  test("error message mentions category", function() {
+    expect(res.getBody().message).to.include("Category");
   });
 }

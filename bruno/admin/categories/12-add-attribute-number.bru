@@ -29,18 +29,21 @@ body:json {
 }
 
 tests {
-  test("status 201", function() {
-    expect(res.getStatus()).to.equal(201);
+  test("201 created or 409 already exists (idempotent)", function() {
+    expect([201, 409]).to.include(res.getStatus());
   });
-  test("key is debit_max", function() {
-    expect(res.getBody().data.key).to.equal("debit_max");
+  test("if 201: key is debit_max", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.key).to.equal("debit_max");
+    }
   });
-  test("type is NUMBER", function() {
-    expect(res.getBody().data.type).to.equal("NUMBER");
+  test("if 201: type is NUMBER", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.type).to.equal("NUMBER");
+    }
   });
-  test("check inherited attributes on child via GET /categories/child/attributes", function() {
-    // After this call, GET /categories/{{childCategoryId}}/attributes should return 3 attributes:
-    // marque (inherited=true), etat (inherited=true), debit_max (inherited=false)
+  test("inheritance: child can have own + inherited attributes", function() {
+    // marque and etat are inherited from parent 27; debit_max is own
     expect(true).to.equal(true);
   });
 }

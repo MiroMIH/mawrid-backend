@@ -1,0 +1,46 @@
+meta {
+  name: E2E Step 5 - Resolve Category ID (handles 409)
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/admin/categories/search?q=Pompes+Industrielles+E2E&depth=0
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    const content = res.getBody().data.content;
+    if (content && content.length > 0) {
+      const cat = content.find(function(c) { return c.name === "Pompes Industrielles E2E"; });
+      if (cat) {
+        bru.setEnvVar("e2eCategoryId", String(cat.id));
+        console.log("[E2E] Resolved e2eCategoryId=" + cat.id);
+      }
+    }
+  }
+  // Log final state
+  const id = bru.getEnvVar("e2eCategoryId");
+  console.log("[E2E] e2eCategoryId=" + id);
+}
+
+docs {
+  Searches admin categories to ensure e2eCategoryId is set.
+  Step 4 sets it on 201. This step resolves it on 409 (already exists).
+  After this step, e2eCategoryId is always guaranteed to be set.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("e2eCategoryId is set", function() {
+    expect(bru.getEnvVar("e2eCategoryId")).to.be.a("string");
+  });
+}

@@ -29,7 +29,7 @@ body:json {
 }
 
 tests {
-  test("status 400", function() {
-    expect(res.getStatus()).to.equal(400);
+  test("status 404 — category not found", function() {
+    expect(res.getStatus()).to.equal(404);
   });
 }

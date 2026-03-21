@@ -1,0 +1,41 @@
+meta {
+  name: Buyer Cannot Submit Reponse
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/seller/reponses/{{demandeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "DISPONIBLE",
+    "note": "Buyer should not be allowed here."
+  }
+}
+
+docs {
+  A BUYER attempting to POST to the seller reponses endpoint.
+  Expected: 401 (role check — BUYER does not have SUPPLIER role).
+  Spring Security returns 401 for wrong-role access in this project.
+}
+
+tests {
+  test("status 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  test("no reponse created", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+}

@@ -1,0 +1,40 @@
+meta {
+  name: Setup Create Closeable Demande
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Closeable Edge Case Demande",
+    "quantity": 50,
+    "deadline": "2026-12-31",
+    "categoryId": 12,
+    "wilaya": "16"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("closeableDemandeId", res.getBody().data.id);
+  }
+}
+
+docs {
+  Creates a fresh OPEN demande that will be closed in 07-close-closeable.bru.
+  The closeableDemandeId is then used in edge_cases/demande_status/05-close-closed.bru.
+}

@@ -25,7 +25,7 @@ script:post-response {
   if (res.getStatus() === 200) {
     const data = res.getBody().data;
     bru.setEnvVar("adminToken", data.accessToken);
-    bru.setEnvVar("userId", data.userId);
+    bru.setEnvVar("adminUserId", data.userId);
     console.log("adminToken saved");
   }
 }

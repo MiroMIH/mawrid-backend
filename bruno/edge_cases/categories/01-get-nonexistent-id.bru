@@ -1,0 +1,32 @@
+meta {
+  name: Get Category Nonexistent ID
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/categories/99999
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Request a category by an ID that does not exist.
+  Expected: 404 Not Found.
+}
+
+tests {
+  test("status 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+  test("no category data returned", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+  test("error message present", function() {
+    expect(res.getBody().message).to.be.a("string");
+  });
+}

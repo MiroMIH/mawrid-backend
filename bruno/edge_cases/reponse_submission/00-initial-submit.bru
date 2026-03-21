@@ -1,0 +1,44 @@
+meta {
+  name: Initial Submit (Setup for Duplicate Test)
+  type: http
+  seq: 0
+}
+
+post {
+  url: {{baseUrl}}/seller/reponses/{{demandeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "DISPONIBLE",
+    "note": "Réponse initiale pour tester la duplication."
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("reponseId", String(res.getBody().data.id));
+  }
+}
+
+docs {
+  Submits the first reponse to demandeId so that subsequent tests
+  (submit-twice, update) have an existing reponse to work against.
+  Accepts 201 (new) or 409/400 (already exists from prior run).
+}
+
+tests {
+  test("201 submitted or 400 already exists (idempotent setup)", function() {
+    expect([201, 400, 409]).to.include(res.getStatus());
+  });
+}

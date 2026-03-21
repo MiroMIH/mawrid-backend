@@ -1,0 +1,79 @@
+meta {
+  name: E2E Step 10 - Buyer Creates Demande with Attributes
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Besoin de 3 pompes centrifuges industrielles",
+    "description": "Pour une installation hydraulique dans notre usine de traitement d'eau. Débit requis: 500 L/min. Pression: 10 bar.",
+    "quantity": 3,
+    "unit": "unités",
+    "deadline": "2026-09-30",
+    "categoryId": {{e2eCategoryId}},
+    "wilaya": "16",
+    "attributes": [
+      {
+        "key": "fabricant",
+        "value": "Grundfos",
+        "custom": false
+      },
+      {
+        "key": "type_pompe",
+        "value": "Centrifuge",
+        "custom": false
+      }
+    ]
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("e2eDemandeId", String(res.getBody().data.id));
+    console.log("[E2E] Demande created id=" + res.getBody().data.id);
+    console.log("[E2E] Async matching will run shortly for category=" + bru.getEnvVar("e2eCategoryId"));
+  }
+}
+
+docs {
+  Buyer creates a demande in the new e2e category, filling both attributes:
+  - fabricant: "Grundfos" (TEXT)
+  - type_pompe: "Centrifuge" (SELECT)
+  After creation, MatchingOrchestrator runs @Async to score subscribed suppliers.
+  e2eDemandeId is saved for all subsequent steps.
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("e2eDemandeId saved", function() {
+    expect(bru.getEnvVar("e2eDemandeId")).to.exist;
+  });
+  test("status is OPEN", function() {
+    expect(res.getBody().data.status).to.equal("OPEN");
+  });
+  test("categoryId matches e2eCategoryId", function() {
+    expect(String(res.getBody().data.categoryId)).to.equal(bru.getEnvVar("e2eCategoryId"));
+  });
+  test("attributes field is present", function() {
+    // Backend saves attrs separately; create response may return empty array.
+    // Verify attrs in step 11 (GET demande) which reloads from DB.
+    expect(res.getBody().data.attributes).to.be.an("array");
+  });
+}

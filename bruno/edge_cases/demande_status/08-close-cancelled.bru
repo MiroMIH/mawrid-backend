@@ -1,0 +1,27 @@
+meta {
+  name: Close Already-Cancelled Demande (via cancellableDemandeId)
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{baseUrl}}/buyer/demandes/{{cancellableDemandeId}}/close
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Attempts to close a demande that is in CANCELLED state.
+  cancellableDemandeId was created and cancelled in 00-setup/08 and 09.
+  Expected: 400 Bad Request (invalid state transition: cannot close a CANCELLED demande).
+}
+
+tests {
+  test("status 400", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+}

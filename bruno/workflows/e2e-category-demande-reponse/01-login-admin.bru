@@ -1,0 +1,38 @@
+meta {
+  name: E2E Step 1 - Login Admin
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "{{adminEmail}}",
+    "password": "{{adminPassword}}"
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    bru.setEnvVar("adminToken", res.getBody().data.accessToken);
+    console.log("[E2E] adminToken saved");
+  }
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("adminToken saved", function() {
+    expect(bru.getEnvVar("adminToken")).to.be.a("string");
+  });
+}

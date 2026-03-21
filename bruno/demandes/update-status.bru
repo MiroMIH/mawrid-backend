@@ -1,5 +1,5 @@
 meta {
-  name: Close Demande via /close endpoint (Buyer)
+  name: Double-Close (Already Closed → 400) (Buyer)
   type: http
   seq: 5
 }
@@ -15,15 +15,13 @@ auth:bearer {
 }
 
 docs {
-  Deprecated: use close-demande.bru instead.
-  Buyer only — closes an OPEN demande. Use PATCH /demandes/{id}/close.
+  Edge case: close-demande (seq 4) already closed the demande.
+  Attempting to close it again should return 400 (invalid transition).
+  Runs after close-demande at the same seq=5 (alphabetically after).
 }
 
 tests {
-  test("status 200", function() {
-    expect(res.getStatus()).to.equal(200);
-  });
-  test("status updated to CLOSED", function() {
-    expect(res.getBody().data.status).to.equal("CLOSED");
+  test("400 — cannot close an already-CLOSED demande", function() {
+    expect(res.getStatus()).to.equal(400);
   });
 }

@@ -1,0 +1,39 @@
+meta {
+  name: Register Duplicate Email
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/auth/register
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "buyer@test.com",
+    "password": "Password1!",
+    "firstName": "Duplicate",
+    "lastName": "User",
+    "role": "BUYER"
+  }
+}
+
+docs {
+  Attempt to register with an email that already exists.
+  Expected: 409 Conflict.
+}
+
+tests {
+  test("status 409", function() {
+    expect(res.getStatus()).to.equal(409);
+  });
+  test("no token in response", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+}

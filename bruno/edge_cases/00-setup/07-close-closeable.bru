@@ -1,0 +1,21 @@
+meta {
+  name: Setup Close the Closeable Demande
+  type: http
+  seq: 6
+}
+
+patch {
+  url: {{baseUrl}}/buyer/demandes/{{closeableDemandeId}}/close
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Closes the demande created in 06-create-closeable.bru.
+  After this, closeableDemandeId is in CLOSED state.
+  Used for: edge_cases/demande_status/05-close-closed and 06-cancel-closed.
+}

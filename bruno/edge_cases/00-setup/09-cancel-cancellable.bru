@@ -1,0 +1,21 @@
+meta {
+  name: Setup Cancel the Cancellable Demande
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/buyer/demandes/{{cancellableDemandeId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Cancels the demande created in 08-create-cancellable.bru.
+  After this, cancellableDemandeId is in CANCELLED state.
+  Used for: edge_cases/demande_status/07-cancel-cancelled and 08-close-cancelled.
+}

@@ -1,0 +1,49 @@
+meta {
+  name: Update Reponse to INDISPONIBLE (Supplier)
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{baseUrl}}/seller/reponses/{{demandeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "INDISPONIBLE",
+    "note": "Stock insuffisant pour honorer cette demande."
+  }
+}
+
+docs {
+  Supplier updates a previously submitted DISPONIBLE reponse to INDISPONIBLE.
+  Must be within 1 hour of the initial submission.
+  Depends on: 00-initial-submit.bru having submitted within this same run.
+  If the reponse was from a prior run (>1h ago), the server returns 400 — also accepted.
+}
+
+tests {
+  test("200 updated or 400 outside 1h window (idempotent)", function() {
+    expect([200, 400]).to.include(res.getStatus());
+  });
+  test("if 200: status is INDISPONIBLE", function() {
+    if (res.getStatus() === 200) {
+      expect(res.getBody().data.status).to.equal("INDISPONIBLE");
+    }
+  });
+  test("if 200: updatedAt present", function() {
+    if (res.getStatus() === 200) {
+      expect(res.getBody().data.updatedAt).to.exist;
+    }
+  });
+}

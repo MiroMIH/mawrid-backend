@@ -1,0 +1,69 @@
+meta {
+  name: E2E Step 14 - Supplier Replies DISPONIBLE
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{baseUrl}}/seller/reponses/{{e2eDemandeId}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "status": "DISPONIBLE",
+    "note": "Nous disposons de pompes centrifuges Grundfos en stock. Délai de livraison: 7 jours ouvrables. Prix unitaire: 85 000 DZD. Garantie 2 ans constructeur incluse."
+  }
+}
+
+script:post-response {
+  const s = res.getStatus();
+  if (s === 201) {
+    bru.setEnvVar("e2eReponseId", String(res.getBody().data.id));
+    console.log("[E2E] Supplier replied DISPONIBLE, reponseId=" + res.getBody().data.id);
+  } else if (s === 400) {
+    console.log("[E2E] Already responded (400) — idempotent, continuing");
+  }
+}
+
+docs {
+  Supplier submits a DISPONIBLE response to the buyer's demande.
+  Includes pricing, delivery time, and warranty info in the note.
+  Accepts 201 (new response) or 400 (already responded from prior run).
+  e2eReponseId is saved for the update test.
+}
+
+tests {
+  test("201 submitted or 400 already responded (idempotent)", function() {
+    expect([201, 400]).to.include(res.getStatus());
+  });
+  test("if 201: status is DISPONIBLE", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.status).to.equal("DISPONIBLE");
+    }
+  });
+  test("if 201: demandeId matches", function() {
+    if (res.getStatus() === 201) {
+      expect(String(res.getBody().data.demandeId)).to.equal(bru.getEnvVar("e2eDemandeId"));
+    }
+  });
+  test("if 201: supplierId matches", function() {
+    if (res.getStatus() === 201) {
+      expect(String(res.getBody().data.supplierId)).to.equal(bru.getEnvVar("e2eSupplierId"));
+    }
+  });
+  test("if 201: note is present", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.note).to.be.a("string");
+    }
+  });
+}

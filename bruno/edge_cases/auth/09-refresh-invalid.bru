@@ -1,0 +1,35 @@
+meta {
+  name: Refresh Invalid Token
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/auth/refresh
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "refreshToken": "this.is.not.a.real.jwt.token"
+  }
+}
+
+docs {
+  Attempt to refresh with a garbage (non-JWT) refresh token.
+  Expected: 401 Unauthorized (token parsing fails).
+}
+
+tests {
+  test("status 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  test("no new token issued", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+}

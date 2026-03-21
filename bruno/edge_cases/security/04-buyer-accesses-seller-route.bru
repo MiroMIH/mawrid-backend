@@ -1,0 +1,29 @@
+meta {
+  name: Buyer Accesses Seller-Only Route
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/seller/feed
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  A BUYER token used on a SUPPLIER-only endpoint (GET /seller/feed).
+  Spring Security returns 401 for wrong-role access in this project.
+}
+
+tests {
+  test("status 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  test("no feed data returned", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+}

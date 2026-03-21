@@ -1,0 +1,59 @@
+meta {
+  name: E2E Step 6 - Add TEXT Attribute to Category
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/admin/categories/{{e2eCategoryId}}/attributes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "key": "fabricant",
+    "label": "Fabricant de la pompe",
+    "type": "TEXT",
+    "required": true,
+    "displayOrder": 1
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("e2eAttrTextId", String(res.getBody().data.id));
+    console.log("[E2E] Created TEXT attribute id=" + res.getBody().data.id);
+  } else if (res.getStatus() === 409) {
+    console.log("[E2E] TEXT attribute already exists (409) — idempotent");
+  }
+}
+
+docs {
+  Adds a TEXT attribute "fabricant" (manufacturer) to the new category.
+  Buyers will fill this when creating a demande in this category.
+}
+
+tests {
+  test("201 created or 409 already exists", function() {
+    expect([201, 409]).to.include(res.getStatus());
+  });
+  test("if 201: key is fabricant", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.key).to.equal("fabricant");
+    }
+  });
+  test("if 201: type is TEXT", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.type).to.equal("TEXT");
+    }
+  });
+}

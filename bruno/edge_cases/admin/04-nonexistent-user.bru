@@ -1,0 +1,32 @@
+meta {
+  name: Admin Get Nonexistent User
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/admin/users/00000000-0000-0000-0000-000000000000
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Admin requests a user by a UUID that doesn't match any account.
+  Expected: 404 Not Found.
+}
+
+tests {
+  test("status 404", function() {
+    expect(res.getStatus()).to.equal(404);
+  });
+  test("no user data returned", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+  test("error message present", function() {
+    expect(res.getBody().message).to.be.a("string");
+  });
+}

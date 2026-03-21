@@ -1,0 +1,36 @@
+meta {
+  name: Get User Detail (Admin)
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/admin/users/{{userId}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+docs {
+  Admin only — fetch full profile for any user by UUID.
+  Requires {{userId}} to be set (e.g. from login or list-users script).
+  Login as ADMIN before calling.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("id matches requested userId", function() {
+    expect(res.getBody().data.id).to.equal(bru.getEnvVar("userId"));
+  });
+  test("email is string", function() {
+    expect(res.getBody().data.email).to.be.a("string");
+  });
+  test("role is present", function() {
+    expect(res.getBody().data.role).to.exist;
+  });
+}

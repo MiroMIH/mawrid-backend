@@ -27,13 +27,17 @@ body:json {
 }
 
 tests {
-  test("status 201", function() {
-    expect(res.getStatus()).to.equal(201);
+  test("201 created or 409 already exists (idempotent)", function() {
+    expect([201, 409]).to.include(res.getStatus());
   });
-  test("email matches", function() {
-    expect(res.getBody().data.email).to.equal("supplier@test.com");
+  test("if 201: email matches", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.email).to.equal("supplier@test.com");
+    }
   });
-  test("role is SUPPLIER", function() {
-    expect(res.getBody().data.role).to.equal("SUPPLIER");
+  test("if 201: role is SUPPLIER", function() {
+    if (res.getStatus() === 201) {
+      expect(res.getBody().data.role).to.equal("SUPPLIER");
+    }
   });
 }

@@ -1,0 +1,50 @@
+meta {
+  name: Create Demande for Cancel Test
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Demande à annuler",
+    "description": "Créée pour tester l'annulation",
+    "quantity": 10,
+    "unit": "unités",
+    "deadline": "2026-12-31",
+    "categoryId": 1,
+    "wilaya": "16",
+    "attributes": []
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("cancelDemandeId", String(res.getBody().data.id));
+  }
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("cancelDemandeId saved", function() {
+    expect(bru.getEnvVar("cancelDemandeId")).to.exist;
+  });
+  test("status is OPEN", function() {
+    expect(res.getBody().data.status).to.equal("OPEN");
+  });
+}

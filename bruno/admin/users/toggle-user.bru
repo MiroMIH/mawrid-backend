@@ -15,7 +15,11 @@ auth:bearer {
 }
 
 docs {
-  note: Set userId env var to the target user's ID before running.
+  Toggles the enabled flag of the user identified by {{userId}}.
+  {{userId}} is set by auth/login.bru (buyer's UUID).
+  CAUTION: Do not run this on the admin account. admin login sets {{adminUserId}}, not {{userId}}.
+  After toggling once (disables buyer), a second toggle re-enables them.
+  This test toggles disabled then re-enables by running twice in the sweep script.
 }
 
 tests {

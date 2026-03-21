@@ -1,0 +1,32 @@
+meta {
+  name: Login Email Not Found
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/auth/login
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email": "doesnotexist@nowhere.com",
+    "password": "Password1!"
+  }
+}
+
+docs {
+  Login with an email address that is not registered.
+  Expected: 401 Unauthorized (same as wrong password — no user enumeration).
+}
+
+tests {
+  test("status 401", function() {
+    expect(res.getStatus()).to.equal(401);
+  });
+  test("no accessToken returned", function() {
+    expect(res.getBody().data).to.not.exist;
+  });
+}

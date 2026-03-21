@@ -1,0 +1,40 @@
+meta {
+  name: E2E Step 8 - Verify Category Has Attributes
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{baseUrl}}/categories/{{e2eCategoryId}}/attributes
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Buyer (or anyone) reads the attribute schema for the new category.
+  Verifies that fabricant (TEXT) and type_pompe (SELECT) are present.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("data is array", function() {
+    expect(res.getBody().data).to.be.an("array");
+  });
+  test("has at least 2 attributes", function() {
+    expect(res.getBody().data.length).to.be.at.least(2);
+  });
+  test("fabricant attribute present", function() {
+    const keys = res.getBody().data.map(function(a) { return a.key; });
+    expect(keys).to.include("fabricant");
+  });
+  test("type_pompe attribute present", function() {
+    const keys = res.getBody().data.map(function(a) { return a.key; });
+    expect(keys).to.include("type_pompe");
+  });
+}

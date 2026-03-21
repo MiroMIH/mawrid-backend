@@ -1,0 +1,45 @@
+meta {
+  name: E2E Step 9 - Supplier Subscribes to New Category
+  type: http
+  seq: 9
+}
+
+patch {
+  url: {{baseUrl}}/seller/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "categoryIds": [{{e2eCategoryId}}]
+  }
+}
+
+docs {
+  Supplier updates their subscribed categories to include the new e2e category.
+  This triggers async matching when a buyer creates a demande in this category.
+  Note: this REPLACES all subscriptions with the provided list.
+  After this, the supplier will be scored when a buyer posts in e2eCategoryId.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("categoryIds is array", function() {
+    expect(res.getBody().data.categoryIds).to.be.an("array");
+  });
+  test("e2eCategoryId in subscriptions", function() {
+    const ids = res.getBody().data.categoryIds.map(function(id) { return String(id); });
+    expect(ids).to.include(bru.getEnvVar("e2eCategoryId"));
+  });
+}

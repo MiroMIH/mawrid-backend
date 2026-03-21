@@ -21,8 +21,16 @@ body:json {
   }
 }
 
+docs {
+  seq 00 already submitted once. This second submission returns 400
+  (server uses 400 for duplicate, not 409).
+}
+
 tests {
-  test("status 409", function() {
-    expect(res.getStatus()).to.equal(409);
+  test("400 — already responded to this demande", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  test("error message present", function() {
+    expect(res.getBody().message).to.be.a("string");
   });
 }

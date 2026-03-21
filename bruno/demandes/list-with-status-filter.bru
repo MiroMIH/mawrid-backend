@@ -1,0 +1,41 @@
+meta {
+  name: List Demandes Filtered by Status (Buyer)
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/buyer/demandes?status=OPEN&page=0&size=20
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+docs {
+  Buyer only — list only OPEN demandes using the optional ?status= filter.
+  Also verifies filter values: CLOSED, CANCELLED.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("content is array", function() {
+    expect(res.getBody().data.content).to.be.an("array");
+  });
+  test("all returned items are OPEN", function() {
+    const items = res.getBody().data.content;
+    items.forEach(function(item) {
+      expect(item.status).to.equal("OPEN");
+    });
+  });
+  test("pagination metadata present", function() {
+    const data = res.getBody().data;
+    expect(data.totalElements).to.be.a("number");
+    expect(data.totalPages).to.be.a("number");
+    expect(data.number).to.equal(0);
+  });
+}

@@ -1,0 +1,46 @@
+meta {
+  name: E2E Step 12 - Supplier Checks Feed
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{baseUrl}}/seller/feed?page=0&size=20
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{supplierToken}}
+}
+
+script:post-response {
+  if (res.getStatus() === 200) {
+    const content = res.getBody().data.content;
+    console.log("[E2E] Supplier feed has " + content.length + " items");
+    if (content.length > 0) {
+      console.log("[E2E] First feed item demandeId=" + content[0].id);
+    }
+  }
+}
+
+docs {
+  Supplier checks their matching feed after demande creation.
+  The async MatchingOrchestrator runs shortly after step 10 (create-demande).
+  The new demande may or may not appear yet depending on async timing.
+  We check that the feed returns 200 and has items from prior matching.
+  Note: e2eDemandeId may not be in the feed yet if async hasn't run.
+  Step 13 checks for the specific demande item directly.
+}
+
+tests {
+  test("status 200", function() {
+    expect(res.getStatus()).to.equal(200);
+  });
+  test("data has content array", function() {
+    expect(res.getBody().data.content).to.be.an("array");
+  });
+  test("pagination metadata present", function() {
+    expect(res.getBody().data.totalElements).to.be.a("number");
+  });
+}

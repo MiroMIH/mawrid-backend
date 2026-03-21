@@ -1,0 +1,58 @@
+meta {
+  name: Setup - Create Open Demande for Expire Test
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/buyer/demandes
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{buyerToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "Demande pour test expire",
+    "description": "Créée pour tester la mise en expiration admin",
+    "quantity": 5,
+    "unit": "pièces",
+    "deadline": "2026-12-31",
+    "categoryId": 1,
+    "wilaya": "16",
+    "attributes": []
+  }
+}
+
+script:post-response {
+  if (res.getStatus() === 201) {
+    bru.setEnvVar("expireDemandeId", String(res.getBody().data.id));
+    console.log("expireDemandeId saved: " + res.getBody().data.id);
+  }
+}
+
+docs {
+  Creates a fresh OPEN demande specifically for admin expire test.
+  Runs at seq 5 (same as recategorize, alphabetically after 05-recategorize.bru).
+  Needed because force-close (seq 4) closes the main demandeId,
+  and expire requires an OPEN demande.
+}
+
+tests {
+  test("status 201", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  test("expireDemandeId saved", function() {
+    expect(bru.getEnvVar("expireDemandeId")).to.exist;
+  });
+  test("status is OPEN", function() {
+    expect(res.getBody().data.status).to.equal("OPEN");
+  });
+}

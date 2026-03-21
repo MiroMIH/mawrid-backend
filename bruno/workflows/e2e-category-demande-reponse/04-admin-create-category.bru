@@ -1,0 +1,48 @@
+meta {
+  name: E2E Step 4 - Admin Creates New Category
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/admin/categories
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Pompes Industrielles E2E",
+    "parentId": null
+  }
+}
+
+script:post-response {
+  const status = res.getStatus();
+  if (status === 201) {
+    bru.setEnvVar("e2eCategoryId", String(res.getBody().data.id));
+    console.log("[E2E] Created new category id=" + res.getBody().data.id);
+  } else if (status === 409) {
+    // Category already exists from a prior run — fetch it by slug
+    console.log("[E2E] Category already exists (409), will use known fallback");
+  }
+}
+
+docs {
+  Admin creates a brand-new root category "Pompes Industrielles E2E".
+  Idempotent: if it already exists (409), step 05 will look it up by search.
+}
+
+tests {
+  test("201 created or 409 already exists", function() {
+    expect([201, 409]).to.include(res.getStatus());
+  });
+}
