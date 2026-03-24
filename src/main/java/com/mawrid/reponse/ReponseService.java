@@ -173,9 +173,43 @@ public class ReponseService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ReponseResponse> listMyReponses(User supplier, Pageable pageable) {
+    public Page<DemandeSummaryResponse> listMyReponses(User supplier, Pageable pageable) {
         return reponseRepository.findBySupplierId(supplier.getId(), pageable)
-                .map(reponseMapper::toResponse);
+                .map(reponse -> {
+                    Demande demande = reponse.getDemande();
+                    DemandeSummaryResponse summary = demandeService.toSummary(demande);
+
+                    DemandeSupplierScoreId scoreId = new DemandeSupplierScoreId(demande.getId(), supplier.getId());
+                    Optional<DemandeSupplierScore> score = scoreRepository.findById(scoreId);
+
+                    DemandeSummaryResponse.SupplierResponseSummary supplierResponse =
+                            DemandeSummaryResponse.SupplierResponseSummary.builder()
+                                    .status(reponse.getStatus())
+                                    .createdAt(reponse.getCreatedAt())
+                                    .build();
+
+                    return DemandeSummaryResponse.builder()
+                            .id(summary.getId())
+                            .title(summary.getTitle())
+                            .quantity(summary.getQuantity())
+                            .unit(summary.getUnit())
+                            .deadline(summary.getDeadline())
+                            .status(summary.getStatus())
+                            .qualityScore(summary.getQualityScore())
+                            .categoryId(summary.getCategoryId())
+                            .categoryName(summary.getCategoryName())
+                            .buyerWilaya(summary.getBuyerWilaya())
+                            .totalReponses(summary.getTotalReponses())
+                            .disponibleCount(summary.getDisponibleCount())
+                            .createdAt(summary.getCreatedAt())
+                            .daysUntilDeadline(summary.getDaysUntilDeadline())
+                            .finalScore(score.map(DemandeSupplierScore::getFinalScore).orElse(0))
+                            .categoryScore(score.map(DemandeSupplierScore::getCategoryScore).orElse(0))
+                            .proximityScore(score.map(DemandeSupplierScore::getProximityScore).orElse(0))
+                            .urgencyScore(score.map(DemandeSupplierScore::getUrgencyScore).orElse(0))
+                            .supplierResponse(supplierResponse)
+                            .build();
+                });
     }
 
     @Transactional(readOnly = true)

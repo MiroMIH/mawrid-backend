@@ -72,8 +72,8 @@ public class ReponseController {
     }
 
     @GetMapping("/reponses")
-    @Operation(summary = "List all my responses (paginated)")
-    public ResponseEntity<ApiResponse<Page<ReponseResponse>>> listMy(
+    @Operation(summary = "List all my responses as demande summaries (same shape as feed)")
+    public ResponseEntity<ApiResponse<Page<DemandeSummaryResponse>>> listMy(
             @AuthenticationPrincipal User supplier,
             @PageableDefault(size = 20) Pageable pageable
     ) {

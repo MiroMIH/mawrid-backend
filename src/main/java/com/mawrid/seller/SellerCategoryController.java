@@ -38,7 +38,7 @@ public class SellerCategoryController {
         return ResponseEntity.ok(ApiResponse.ok(categoryService.getSubscribed(user)));
     }
 
-    @PatchMapping
+    @PatchMapping("/subscribed")
     @Operation(summary = "Update supplier category subscriptions")
     public ResponseEntity<ApiResponse<UserResponse>> updateCategories(
             @AuthenticationPrincipal User user,
