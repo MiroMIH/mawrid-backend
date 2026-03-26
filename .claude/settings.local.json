@@ -112,7 +112,9 @@
       "Bash(PGPASSWORD=mawrid_dev_pass_123 psql -U mawrid -d mawrid -h localhost -c \"\\\\d demande_attributes\" 2>&1)",
       "Bash(PGPASSWORD=mawrid_dev_pass_123 psql -U mawrid -d mawrid -h localhost -c \"SELECT id, name, active, node_type, parent_id FROM categories WHERE id = 48;\" 2>&1)",
       "Bash(grep -v \"proxy detection\\\\|WindowsProxy\\\\|at Windows\" bru run auth edge_cases/00-setup edge_cases/auth edge_cases/categories edge_cases/demande_creation edge_cases/demande_status edge_cases/reponse_submission edge_cases/security edge_cases/admin edge_cases/pagination --env local)",
-      "Bash(grep -v \"proxy detection\\\\|WindowsProxy\\\\|at Windows\" bru run workflows/e2e-category-demande-reponse --env local)"
+      "Bash(grep -v \"proxy detection\\\\|WindowsProxy\\\\|at Windows\" bru run workflows/e2e-category-demande-reponse --env local)",
+      "Bash(grep -E \"\\\\.\\(tsx?|jsx?|json|html|css|yaml\\)$\")",
+      "Bash(find /c/Users/USER/Desktop/Mawrid/mawrid-admin -maxdepth 2 -name *.css -o -name tailwind.config.*)"
     ]
   }
 }

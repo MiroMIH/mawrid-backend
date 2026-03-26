@@ -67,6 +67,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     Page<Category> findAllByActiveTrue(Pageable pageable);
 
+    long countByActiveTrue();
+
     // ── Admin search / filter ────────────────────────────────────
 
     @Query("""

@@ -13,4 +13,6 @@ public class AdminStatsResponse {
     long openDemandes;
     long totalReponses;
     double responseRate;
+    long totalCategories;
+    long activeCategories;
 }

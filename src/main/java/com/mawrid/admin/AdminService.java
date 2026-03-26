@@ -4,6 +4,7 @@ import com.mawrid.admin.dto.AdminStatsResponse;
 import com.mawrid.admin.dto.SimulationRequest;
 import com.mawrid.admin.dto.SimulationResult;
 import com.mawrid.category.Category;
+import com.mawrid.category.CategoryRepository;
 import com.mawrid.category.CategoryService;
 import com.mawrid.common.exception.ResourceNotFoundException;
 import com.mawrid.demande.Demande;
@@ -38,6 +39,7 @@ public class AdminService {
     private final DemandeRepository demandeRepository;
     private final ReponseRepository reponseRepository;
     private final CategoryService categoryService;
+    private final CategoryRepository categoryRepository;
     private final MatchingService matchingService;
     private final DemandeScoreEngine scoreEngine;
     private final UserMapper userMapper;
@@ -97,6 +99,9 @@ public class AdminService {
         long openDemandes   = demandeRepository.countByStatus(DemandeStatus.OPEN);
         long totalReponses  = reponseRepository.count();
 
+        long totalCategories  = categoryRepository.count();
+        long activeCategories = categoryRepository.countByActiveTrue();
+
         double responseRate = totalDemandes > 0
                 ? (double) totalReponses / totalDemandes : 0.0;
 
@@ -108,6 +113,8 @@ public class AdminService {
                 .openDemandes(openDemandes)
                 .totalReponses(totalReponses)
                 .responseRate(responseRate)
+                .totalCategories(totalCategories)
+                .activeCategories(activeCategories)
                 .build();
     }
 
