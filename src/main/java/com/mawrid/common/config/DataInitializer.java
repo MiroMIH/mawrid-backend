@@ -14,8 +14,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -48,7 +46,6 @@ public class DataInitializer implements ApplicationRunner {
     private String superadminLastName;
 
     @Override
-    @Transactional
     public void run(ApplicationArguments args) {
         seedCategories();
         seedSuperadmin();
