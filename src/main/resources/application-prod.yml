@@ -17,11 +17,10 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:redis_secret}
-      ssl:
-        enabled: ${REDIS_SSL:false}
+      url: ${REDIS_URL:redis://localhost:6379}
+      timeout: 10000ms
+      lettuce:
+        shutdown-timeout: 0ms
 
 app:
   minio:
@@ -40,6 +39,11 @@ logging:
     com.mawrid: WARN
     org.springframework: WARN
     root: ERROR
+
+management:
+  health:
+    mail:
+      enabled: false
 
 server:
   error:
