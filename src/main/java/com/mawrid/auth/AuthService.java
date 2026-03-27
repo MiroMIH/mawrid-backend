@@ -6,6 +6,7 @@ import com.mawrid.auth.dto.RefreshRequest;
 import com.mawrid.auth.dto.RegisterRequest;
 import com.mawrid.common.exception.BusinessException;
 import com.mawrid.common.exception.DuplicateResourceException;
+import io.jsonwebtoken.JwtException;
 import com.mawrid.user.Role;
 import com.mawrid.user.User;
 import com.mawrid.user.UserRepository;
@@ -94,14 +95,26 @@ public class AuthService {
     public AuthResponse refresh(RefreshRequest request) {
         String token = request.getRefreshToken();
 
-        if (!jwtService.isRefreshToken(token)) {
-            throw new BusinessException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+        try {
+            if (!jwtService.isRefreshToken(token)) {
+                throw new BusinessException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
+            }
+        } catch (BusinessException e) {
+            throw e;
+        } catch (JwtException e) {
+            throw new BusinessException("Refresh token invalid or expired", HttpStatus.UNAUTHORIZED);
         }
+
         if (jwtService.isTokenBlacklisted(token)) {
             throw new BusinessException("Refresh token has been revoked", HttpStatus.UNAUTHORIZED);
         }
 
-        String email = jwtService.extractUsername(token);
+        String email;
+        try {
+            email = jwtService.extractUsername(token);
+        } catch (JwtException e) {
+            throw new BusinessException("Refresh token invalid or expired", HttpStatus.UNAUTHORIZED);
+        }
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BusinessException("User not found", HttpStatus.UNAUTHORIZED));
 
