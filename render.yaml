@@ -1,0 +1,51 @@
+services:
+  - type: web
+    name: mawrid-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # PostgreSQL — set to your Neon JDBC URL
+      # Format: jdbc:postgresql://ep-xxx.neon.tech/neondb?sslmode=require
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+
+      # Redis — Upstash (set REDIS_SSL=true for Upstash)
+      - key: REDIS_HOST
+        sync: false
+      - key: REDIS_PORT
+        sync: false
+      - key: REDIS_PASSWORD
+        sync: false
+      - key: REDIS_SSL
+        value: "true"
+
+      # JWT
+      - key: JWT_SECRET
+        generateValue: true
+
+      # Mail
+      - key: MAIL_HOST
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+
+      # Firebase — upload firebase-service-account.json as a Render Secret File
+      # at path /etc/secrets/firebase-service-account.json
+      - key: FIREBASE_CREDENTIALS_PATH
+        value: /etc/secrets/firebase-service-account.json
+
+      # CORS — set to your Vercel frontend URLs
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false

@@ -80,7 +80,7 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY:-minioadmin}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin_secret}
       MINIO_BUCKET: ${MINIO_BUCKET:-mawrid-attachments}
-      JWT_SECRET: ${JWT_SECRET}
+      JWT_SECRET: ${JWT_SECRET:-404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
       JWT_ACCESS_EXPIRY: ${JWT_ACCESS_EXPIRY:-900000}
       JWT_REFRESH_EXPIRY: ${JWT_REFRESH_EXPIRY:-604800000}
       MAIL_HOST: ${MAIL_HOST}
@@ -92,6 +92,30 @@ services:
       - ./config:/app/config:ro
     ports:
       - "8080:8080"
+    networks:
+      - mawrid-net
+
+  mawrid-web:
+    build: ../mawrid-web
+    container_name: mawrid-web
+    ports:
+      - "3000:5173"
+    environment:
+      VITE_API_URL: http://localhost:8080
+    depends_on:
+      - app
+    networks:
+      - mawrid-net
+
+  mawrid-admin:
+    build: ../mawrid-admin
+    container_name: mawrid-admin
+    ports:
+      - "3001:5173"
+    environment:
+      VITE_API_URL: http://localhost:8080
+    depends_on:
+      - app
     networks:
       - mawrid-net
 
