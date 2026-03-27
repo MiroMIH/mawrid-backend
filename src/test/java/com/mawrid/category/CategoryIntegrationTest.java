@@ -17,10 +17,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.CacheManager;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,9 +28,6 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Integration tests for CategoryService.
@@ -53,14 +47,10 @@ import static org.mockito.Mockito.when;
         "spring.flyway.enabled=false",
         "spring.cache.type=simple",
         "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect",
-        "spring.data.redis.port=6399",
         "spring.jpa.properties.hibernate.format_sql=false",
         "spring.jpa.show-sql=false",
 })
 class CategoryIntegrationTest {
-
-    @MockBean
-    StringRedisTemplate stringRedisTemplate;
 
     @Autowired CategoryService categoryService;
     @Autowired CategoryRepository categoryRepository;
@@ -73,9 +63,6 @@ class CategoryIntegrationTest {
 
     @BeforeEach
     void setUpMocks() {
-        ValueOperations<String, String> ops = mock(ValueOperations.class);
-        when(stringRedisTemplate.opsForValue()).thenReturn(ops);
-        when(stringRedisTemplate.hasKey(anyString())).thenReturn(false);
         // Clear category cache so each test sees fresh data
         cacheManager.getCacheNames().forEach(name ->
                 cacheManager.getCache(name).clear());

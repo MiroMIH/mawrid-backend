@@ -15,13 +15,6 @@ spring:
       minimum-idle: 2
       maximum-pool-size: 10
 
-  data:
-    redis:
-      url: ${REDIS_URL:redis://localhost:6379}
-      timeout: 10000ms
-      lettuce:
-        shutdown-timeout: 0ms
-
 app:
   minio:
     enabled: false

@@ -116,7 +116,8 @@
       "Bash(grep -E \"\\\\.\\(tsx?|jsx?|json|html|css|yaml\\)$\")",
       "Bash(find /c/Users/USER/Desktop/Mawrid/mawrid-admin -maxdepth 2 -name *.css -o -name tailwind.config.*)",
       "Bash(node -e \"const l = require\\(''C:/Users/USER/Desktop/Mawrid/mawrid-web/package-lock.json''\\); console.log\\(''lockfileVersion:'', l.lockfileVersion\\)\")",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm run:*)"
     ]
   }
 }

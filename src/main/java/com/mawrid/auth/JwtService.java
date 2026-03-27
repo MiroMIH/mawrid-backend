@@ -6,13 +6,12 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 @Slf4j
@@ -28,16 +27,12 @@ public class JwtService {
     @Value("${app.jwt.refresh-token-expiry}")
     private long refreshTokenExpiry;
 
-    private static final String BLACKLIST_PREFIX = "jwt:blacklist:";
     private static final String TYPE_CLAIM = "type";
     private static final String ACCESS = "access";
     private static final String REFRESH = "refresh";
 
-    private final StringRedisTemplate redisTemplate;
-
-    public JwtService(StringRedisTemplate redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+    /** token → expiry timestamp (ms). Lazily cleaned up on reads. */
+    private final ConcurrentHashMap<String, Long> blacklist = new ConcurrentHashMap<>();
 
     public String generateAccessToken(UserDetails userDetails) {
         return buildToken(userDetails.getUsername(), ACCESS, accessTokenExpiry);
@@ -80,18 +75,23 @@ public class JwtService {
         return Math.max(0, expiration.getTime() - System.currentTimeMillis());
     }
 
-    // ── Redis Blacklist ──────────────────────────────────────────
+    // ── In-memory Blacklist ──────────────────────────────────────
 
     public void blacklistToken(String token) {
-        long ttl = getRemainingTtlMs(token);
-        if (ttl > 0) {
-            redisTemplate.opsForValue()
-                    .set(BLACKLIST_PREFIX + token, "1", ttl, TimeUnit.MILLISECONDS);
+        long expiresAt = System.currentTimeMillis() + getRemainingTtlMs(token);
+        if (expiresAt > System.currentTimeMillis()) {
+            blacklist.put(token, expiresAt);
         }
     }
 
     public boolean isTokenBlacklisted(String token) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(BLACKLIST_PREFIX + token));
+        Long expiresAt = blacklist.get(token);
+        if (expiresAt == null) return false;
+        if (System.currentTimeMillis() > expiresAt) {
+            blacklist.remove(token);
+            return false;
+        }
+        return true;
     }
 
     // ── Helpers ─────────────────────────────────────────────────

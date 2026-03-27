@@ -6,6 +6,6 @@ class MawridApplicationTests extends AbstractIntegrationTest {
 
     @Test
     void contextLoads() {
-        // Verifies the entire Spring context starts cleanly with H2 + mocked Redis
+        // Verifies the entire Spring context starts cleanly with H2
     }
 }

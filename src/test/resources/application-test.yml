@@ -16,11 +16,6 @@ spring:
     enabled: false
   cache:
     type: simple
-  data:
-    redis:
-      host: localhost
-      port: 6370   # non-existent port — mocked in tests
-      password: ""
   mail:
     host: localhost
     port: 3025
